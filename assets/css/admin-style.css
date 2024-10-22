@@ -1,0 +1,328 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0px;
+}
+
+.as-chapter-inputfield-link,
+.as-lesson-inputfield-link,
+.as-topic-inputfield-link,
+.as-section-inputfield-link {
+    cursor: pointer;
+    color: rgb(4, 122, 248);
+}
+
+
+.as-lesson-accordion,
+.as-topic-container,
+.as-lesson-container,
+.as-section-container,
+.as-topic-accordion,
+.as-section-accordion {
+    margin-left: 40px;
+}
+
+.as-icon:before {
+    content: '+';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    font-size: 17px;
+    color: rgb(4, 122, 248);
+    padding: 2px;
+}
+
+.as-lesson-input-box,
+.as-chapter-input-box,
+.as-topic-input-box,
+.as-section-input-box {
+    width: 80%;
+}
+
+.as-add-lesson,
+.as-cancel-lesson,
+.as-add-chapter,
+.as-cancel-chapter,
+.as-cancel-topic,
+.as-add-topic,
+.as-add-section,
+.as-cancel-section {
+    background-color: #008CBA;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    padding: 8px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.as-cancel-chapter,
+.as-cancel-lesson,
+.as-cancel-topic,
+.as-cancel-section {
+    background-color: rgb(180, 180, 180) !important;
+    color: white !important;
+}
+
+.as-cancel-chapter:hover,
+.as-cancel-lesson:hover,
+.as-cancel-topic:hover,
+.as-cancel-section:hover {
+    background-color: rgb(77, 76, 76);
+    color: white;
+}
+
+
+.as-add-chapter:hover,
+.as-add-lesson:hover,
+.as-add-topic:hover,
+.as-add-section:hover {
+    background-color: #084c62;
+    color: white;
+}
+
+.as-chapter-accordion {
+    padding: 10px;
+    border: 1px solid #666666;
+    margin: 6px 0px;
+}
+
+.as-accordion-item {
+    display: flex;
+    padding: 10px;
+    margin: 5px;
+    border: 1px dashed #333333;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.as-builder-empty {
+    background: #f3f4f5;
+    padding: 30px 10px;
+    text-align: center;
+    align-items: center;
+    background: #f3f4f5;
+    border: 2px dashed #e2e4e7;
+    box-sizing: border-box;
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    min-height: 40px;
+    justify-content: center;
+    margin: 10px 0px;
+    position: relative;
+    width: calc(100% - 5px);
+}
+
+.as-chapter-input-field,
+.as-lesson-input-field,
+.as-topic-input-field,
+.as-section-input-field {
+    display: none;
+}
+
+a.as-remove-chapter,
+a.as-remove-lesson,
+a.as-remove-topic,
+a.as-remove-section,
+a.as-remove-fetch-chapter,
+a.as-remove-fetch-lesson,
+a.as-remove-fetch-topic,
+a.as-remove-fetch-section {
+    color: red;
+    cursor: pointer;
+}
+
+body #adminmenumain .wp-submenu>li a[href*="sections"]:after,
+body #adminmenumain .wp-submenu>li a[href*="question-bank"]:after {
+    background: #b4b9be;
+    content: "";
+    display: block;
+    height: 1px;
+    margin: 12px auto 0;
+    opacity: 0.4;
+}
+
+/* .............................. Question Bank Admin Design ................................... */
+.as-answer-container {
+    padding: 20px;
+    background-color: #f1f1f1;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+}
+
+.as-answer-container .as-answer-choose-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.as-answer-container .as-answer-choose-option label {
+    padding-right: 20px;
+}
+
+.as-answer-container .as-answer-choose-option #as-question-bank-answer,
+.as-answer-container .as-answer-wrapper .as-answer-list .as-answer-form-item .as-answer-form .as-question-answer {
+    padding: 8px 15px;
+    font-size: 14px;
+    color: #32373c;
+    background-color: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 350px;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.as-answer-container .as-answer-choose-option #as-question-bank-answer:focus,
+.as-answer-container .as-answer-wrapper .as-answer-list .as-answer-form-item .as-answer-form .as-question-answer:focus {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+    outline: none;
+}
+
+.as-answer-container .as-answer-wrapper .as-answer-list .as-answer-form-item .as-answer-form .as-question-answer {
+    max-width: 90%;
+    margin-bottom: 10px;
+}
+
+.as-answer-container .as-answer-wrapper .as-answer-list .as-answer-form-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.as-answer-container .as-answer-wrapper .as-answer-list .as-answer-form-item .as-answer-form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.as-answer-container .as-answer-wrapper .as-answer-list .as-answer-form-item .as-answer-form label {
+    padding: 0 10px;
+
+}
+
+.as-answer-container .as-add-button {
+    background-color: #007cba;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 10px;
+}
+
+.as-answer-container .as-add-button:hover {
+    background-color: #005aab;
+}
+
+.as-answer-container .as-answer-list .as-answer-form-item .as-remove-button {
+    background-color: #dc3232;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background-color 0.2s ease-in-out;
+    margin: 15px 0px;
+}
+
+.as-answer-container .as-answer-list .as-answer-form-item .as-remove-button:hover {
+    background-color: #a22828;
+}
+
+.as-d-none {
+    display: none !important;
+}
+
+/* ................. Search box ................... */
+.as-quiz-question-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 8px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.as-selected-questions-wrapper #as-selected-questions-list li .as-question-wrapper {
+    border: 2px solid #135e96;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0px;
+    cursor: pointer;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 500;
+    width: 84%;
+}
+
+.as-selected-questions-wrapper #as-selected-questions-list li a {
+    color: red;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.as-selected-questions-wrapper #as-selected-questions-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.as-selected-questions-wrapper #as-selected-questions-list li .as_question_point_list {
+    padding-left: 20px;
+}
+
+.as-selected-questions-wrapper #as-selected-questions-list li .as_question_point_list input[type=number] {
+    min-height: 42px;
+    border: 2px solid #135e96;
+}
+
+/* ......................... quiz total timing ......................... */
+
+.as-quiz-time-wrapper {
+    margin-bottom: 15px;
+}
+
+.as-quiz-time-label {
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.as-quiz-time-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+}
+
+.as-quiz-time-input:focus {
+    border-color: #007cba;
+    outline: none;
+}
