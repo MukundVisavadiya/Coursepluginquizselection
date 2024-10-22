@@ -10,7 +10,8 @@ h6 {
 .as-chapter-inputfield-link,
 .as-lesson-inputfield-link,
 .as-topic-inputfield-link,
-.as-section-inputfield-link {
+.as-section-inputfield-link,
+.as-chapter-quiz-inputfield-link {
     cursor: pointer;
     color: rgb(4, 122, 248);
 }
@@ -49,7 +50,8 @@ h6 {
 .as-cancel-topic,
 .as-add-topic,
 .as-add-section,
-.as-cancel-section {
+.as-cancel-section,
+.as-cancel-chapter-quiz {
     background-color: #008CBA;
     border: none;
     border-radius: 8px;
@@ -67,7 +69,8 @@ h6 {
 .as-cancel-chapter,
 .as-cancel-lesson,
 .as-cancel-topic,
-.as-cancel-section {
+.as-cancel-section,
+.as-cancel-chapter-quiz {
     background-color: rgb(180, 180, 180) !important;
     color: white !important;
 }
@@ -75,7 +78,8 @@ h6 {
 .as-cancel-chapter:hover,
 .as-cancel-lesson:hover,
 .as-cancel-topic:hover,
-.as-cancel-section:hover {
+.as-cancel-section:hover,
+.as-cancel-chapter-quiz:hover {
     background-color: rgb(77, 76, 76);
     color: white;
 }
@@ -125,7 +129,8 @@ h6 {
 .as-chapter-input-field,
 .as-lesson-input-field,
 .as-topic-input-field,
-.as-section-input-field {
+.as-section-input-field,
+.as-quiz-selection {
     display: none;
 }
 
@@ -136,9 +141,11 @@ a.as-remove-section,
 a.as-remove-fetch-chapter,
 a.as-remove-fetch-lesson,
 a.as-remove-fetch-topic,
-a.as-remove-fetch-section {
+a.as-remove-fetch-section,
+a.as-remove-chapter-quiz {
     color: red;
     cursor: pointer;
+    text-decoration: none;
 }
 
 body #adminmenumain .wp-submenu>li a[href*="sections"]:after,
@@ -325,4 +332,13 @@ body #adminmenumain .wp-submenu>li a[href*="question-bank"]:after {
 .as-quiz-time-input:focus {
     border-color: #007cba;
     outline: none;
+}
+
+/* ........................ quiz selection in course ............................... */
+.as-accordion-item-container .as-chapter-quiz-accordion {
+    padding: 10px;
+    border: 3px dotted #135e96;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 5px;
 }

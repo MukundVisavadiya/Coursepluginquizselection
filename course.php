@@ -10,6 +10,10 @@
  */
 
 /**
+ * Quiz selection in course
+ */
+require_once dirname(__FILE__) . '/quiz-selection.php';
+/**
  * Course Quiz & Questions Settings Code
  */
 require_once dirname(__FILE__)  . '/quiz-questions.php';
@@ -95,6 +99,9 @@ function as_enqueue_admin_course_style_script()
 
     // quiz question create question bank to selected question and create quiz
     wp_localize_script("as-course-plugin-admin-script", "as_quiz_question_search", $data_table_course);
+
+    // quiz selection in course using ajax localization
+    wp_localize_script("as-course-plugin-admin-script", "as_quiz_selection_in_course", $data_table_course);
 
     wp_enqueue_style('as-datatable', plugin_dir_url(__FILE__) . 'assets/css/datatable.css');
     wp_enqueue_style('as-admin-style', plugin_dir_url(__FILE__) . 'assets/css/admin-style.css');

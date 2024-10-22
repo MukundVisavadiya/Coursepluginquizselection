@@ -636,6 +636,73 @@ jQuery(document).ready(function () {
 
 });
 
+// quiz selection in course logic - add quiz
+jQuery(document).on('click', '.as-chapter-quiz-inputfield-link', function (e) {
+    e.preventDefault();
+    let chapterId = jQuery(this).data('quiz-chapter-id');
+    jQuery(`.as-quiz-chapter-input-id-${chapterId}`).show();
+    jQuery(this).hide();
+});
+
+// Cancel Quiz Search 
+jQuery(document).on('click', '.as-cancel-chapter-quiz', function (e) {
+    e.preventDefault();
+    let chapterId = jQuery(this).data('quiz-chapter-id');
+    jQuery(this).closest(`.as-quiz-chapter-input-id-${chapterId}`).hide();
+    jQuery('.as-chapter-quiz-inputfield-link').show();
+});
+
+// get quiz data using ajax
+jQuery(document).ready(function () {
+    var selectedQuiz = [];
+    jQuery('.as-quiz-selection-search-input').select2({
+        ajax: {
+            url: as_quiz_selection_in_course.ajaxurl,
+            type: 'POST',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    action: 'as_quiz_selection_in_course',
+                    search_query: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: jQuery.map(data, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.title
+                        };
+                    })
+                };
+            }
+        },
+        minimumInputLength: 3
+    });
+
+    // Handle the quiz selection and append it
+    jQuery('.as-quiz-selection-search-input').on('select2:select', function (e) {
+        console.log("This is clickble");
+        var selectedQuiz = e.params.data.text;
+        var selectedQuizId = e.params.data.id
+        var chapterId = jQuery(this).data('quiz-chapter-id');
+
+        // Create the new quiz item
+        var quizItem = `<div class="as-chapter-quiz-accordion">
+        <b>Quiz: ${selectedQuiz}</b>
+        <a class="as-remove-chapter-quiz" data-quiz-chapter-id="${chapterId}">Remove</a>
+        <input type="hidden" name="quiz_id[${chapterId}][]" class="as-hidden-chapter-quiz-id" value="${selectedQuizId}" />
+    </div>`;
+        jQuery(`.as-quiz-accordion-container-${chapterId}`).append(quizItem);
+    });
+
+    jQuery(document).on('click', '.as-remove-chapter-quiz', function () {
+        var chapterId = jQuery(this).data('quiz-chapter-id');
+        jQuery(this).closest('.as-chapter-quiz-accordion').remove();
+    });
+});
+
 
 
 
