@@ -18,7 +18,8 @@ h6 {
 
 .as-chapter-quiz-inputfield-link,
 .as-lesson-quiz-inputfield-link,
-.as-topic-quiz-inputfield-link {
+.as-topic-quiz-inputfield-link,
+.as-section-quiz-inputfield-link {
     cursor: pointer;
     color: #0eab00
 }
@@ -43,7 +44,9 @@ h6 {
 .as-quiz-lesson-selection,
 .as-lesson-quiz-inputfield-link,
 .as-topic-quiz-inputfield-link,
-.as-quiz-topic-selection {
+.as-quiz-topic-selection,
+.as-section-quiz-inputfield-link,
+.as-quiz-section-selection {
     margin-left: 40px;
 }
 
@@ -74,7 +77,8 @@ h6 {
 .as-cancel-section,
 .as-cancel-chapter-quiz,
 .as-cancel-lesson-quiz,
-.as-cancel-topic-quiz {
+.as-cancel-topic-quiz,
+.as-cancel-section-quiz {
     background-color: #008CBA;
     border: none;
     border-radius: 8px;
@@ -95,7 +99,8 @@ h6 {
 .as-cancel-section,
 .as-cancel-chapter-quiz,
 .as-cancel-lesson-quiz,
-.as-cancel-topic-quiz {
+.as-cancel-topic-quiz,
+.as-cancel-section-quiz {
     background-color: rgb(180, 180, 180) !important;
     color: white !important;
 }
@@ -106,7 +111,8 @@ h6 {
 .as-cancel-section:hover,
 .as-cancel-chapter-quiz:hover,
 .as-cancel-lesson-quiz:hover,
-.as-cancel-topic-quiz:hover {
+.as-cancel-topic-quiz:hover,
+.as-cancel-section-quiz:hover {
     background-color: rgb(77, 76, 76);
     color: white;
 }
@@ -159,7 +165,8 @@ h6 {
 .as-section-input-field,
 .as-quiz-selection,
 .as-quiz-lesson-selection,
-.as-quiz-topic-selection {
+.as-quiz-topic-selection,
+.as-quiz-section-selection {
     display: none;
 }
 
@@ -173,7 +180,8 @@ a.as-remove-fetch-topic,
 a.as-remove-fetch-section,
 a.as-remove-chapter-quiz,
 a.as-remove-lesson-quiz,
-a.as-remove-topic-quiz {
+a.as-remove-topic-quiz,
+a.as-remove-section-quiz {
     color: red;
     cursor: pointer;
     text-decoration: none;
@@ -368,7 +376,8 @@ body #adminmenumain .wp-submenu>li a[href*="question-bank"]:after {
 /* ........................ quiz selection in course ............................... */
 .as-accordion-item-container .as-chapter-quiz-accordion,
 .as-accordion-item-container .as-lesson-quiz-accordion,
-.as-accordion-item-container .as-topic-quiz-accordion {
+.as-accordion-item-container .as-topic-quiz-accordion,
+.as-accordion-item-container .as-section-quiz-accordion {
     padding: 10px;
     border: 3px dotted #0eab00;
     display: flex;

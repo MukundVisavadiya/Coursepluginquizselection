@@ -464,10 +464,20 @@ jQuery(document).on('click', '.as-add-section', function (e) {
                                 <input type="hidden" name="section_id[${chapterId}][${lessonId}][${topicId}][]"  value="${response.data.section_id}" />
                                 <b>${response.data.section_name}</b>
                                 <a class="as-remove-section" data-chapter-id="${chapterId}" data-lesson-id="${lessonId}" data-topic-id="${topicId}" data-section-id="${response.data.section_id}">Remove</a>
-                        </div>`
+                        </div>
+                        <div class="as-quiz-accordion-container-section-${response.data.section_id}">
+                        </div>
+                        <div class="as-quiz-section-selection as-quiz-section-input-id-${response.data.section_id}">
+                            <select class="as-quiz-selection-search-input-section form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-section-id="${response.data.section_id}">
+                            </select>
+                            <a class="as-cancel-section-quiz" data-quiz-section-id="${response.data.section_id}">Cancel</a>
+                        </div>
+                        <a class="as-icon-quiz as-section-quiz-inputfield-link" data-quiz-section-id="${response.data.section_id}">Add Quiz Section</a>
+`
                 );
                 jQuery('.as-section-input-box').val('');
                 jQuery('.as-section-inputfield-link').show();
+                asInitializeSection();
             } else {
                 alert(response.data);
             }
@@ -934,6 +944,96 @@ function asInitializeTopic() {
 jQuery(document).ready(function () {
     // Run the initialization
     asInitializeTopic();
+});
+
+
+
+// quiz selection in course logic - add quiz for Section
+jQuery(document).on('click', '.as-section-quiz-inputfield-link', function (e) {
+    e.preventDefault();
+    let sectionId = jQuery(this).data('quiz-section-id');
+    jQuery(`.as-quiz-section-input-id-${sectionId}`).show();
+    jQuery(this).hide();
+});
+
+// Cancel Quiz Search 
+jQuery(document).on('click', '.as-cancel-section-quiz', function (e) {
+    e.preventDefault();
+    let sectionId = jQuery(this).data('quiz-section-id');
+    jQuery(this).closest(`.as-quiz-section-input-id-${sectionId}`).hide();
+    jQuery('.as-section-quiz-inputfield-link').show();
+});
+
+// quiz selection function
+function asInitializeQuizSelectionSection() {
+    jQuery('.as-quiz-selection-search-input-section').select2({
+        ajax: {
+            url: as_quiz_selection_in_course.ajaxurl,
+            type: 'POST',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    action: 'as_quiz_selection_in_course',
+                    search_query: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: jQuery.map(data, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.title
+                        };
+                    })
+                };
+            }
+        },
+        minimumInputLength: 3
+    });
+}
+
+// Append the selected quiz to the Section
+function asAppendSelectedQuizSection(selectedQuiz, selectedQuizId, sectionId) {
+    var quizItem = `
+        <div class="as-section-quiz-accordion">
+            <b>Quiz: ${selectedQuiz}</b>
+            <a class="as-remove-section-quiz" data-quiz-section-id="${sectionId}">Remove</a>
+            <input type="hidden" name="quiz_id[${sectionId}][]" class="as-hidden-section-quiz-id" value="${selectedQuizId}" />
+        </div>`;
+
+    jQuery(`.as-quiz-accordion-container-section-${sectionId}`).append(quizItem);
+}
+
+// Handle quiz selection event
+function asHandleQuizSelectionSection() {
+    jQuery('.as-quiz-selection-search-input-section').on('select2:select', function (e) {
+        var selectedQuiz = e.params.data.text;
+        var selectedQuizId = e.params.data.id;
+        var sectionId = jQuery(this).data("quiz-section-id");
+
+        asAppendSelectedQuizSection(selectedQuiz, selectedQuizId, sectionId);
+    });
+}
+
+// Handle quiz removal
+function asHandleQuizRemovalSection() {
+    jQuery(document).on('click', '.as-remove-section-quiz', function () {
+        jQuery(this).closest('.as-section-quiz-accordion').remove();
+    });
+}
+
+// Initialize the functionalities
+function asInitializeSection() {
+    asInitializeQuizSelectionSection();
+    asHandleQuizSelectionSection();
+    asHandleQuizRemovalSection();
+}
+
+// get quiz data using ajax
+jQuery(document).ready(function () {
+    // Run the initialization
+    asInitializeSection();
 });
 
 

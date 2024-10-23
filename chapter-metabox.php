@@ -94,7 +94,7 @@ function as_clts_post_create()
                                                 <input type="hidden" name="topic_id[<?php echo $fetch_che_id ?>][<?php echo $fetch_lesson_id ?>][]" class="as-hidden-topic-id" value="<?php echo $fetch_topic_id ?>" />
                                             </div>
 
-                                            <!-- append quiz container for lesson -->
+                                            <!-- append quiz container for topic -->
                                             <div class="as-quiz-accordion-container-topic-<?php echo $fetch_topic_id; ?>">
                                                 <?php if (!empty($fetch_topic_quiz_id)) {
                                                     foreach ($fetch_topic_quiz_id as $quiz_id) { ?>
@@ -109,14 +109,37 @@ function as_clts_post_create()
 
                                             <div class="as-section-accordion-container <?php echo $sortable_class; ?>" id="as-sortable-section">
                                                 <?php foreach ($fetch_sections as $fetch_section) {
-                                                    $fetch_section_id = $fetch_section['section_id'] ?>
+                                                    $fetch_section_id = $fetch_section['section_id'];
+                                                    $fetch_section_quiz_id = $fetch_section['quiz_id']; ?>
                                                     <div class="as-section-accordion">
                                                         <div class="as-accordion-item">
                                                             <b><?php echo get_the_title($fetch_section_id); ?></b>
                                                             <a class="as-remove-fetch-section" data-lesson-id="<?php echo $fetch_lesson_id ?>" data-chapter-id="<?php echo $fetch_che_id ?>" data-topic-id="<?php echo $fetch_topic_id ?>" data-section-id="<?php echo $fetch_section_id ?>">Remove</a>
                                                             <input type="hidden" name="section_id[<?php echo $fetch_che_id ?>][<?php echo $fetch_lesson_id ?>][<?php echo $fetch_topic_id ?>][]" class="as-hidden-section-id" value="<?php echo $fetch_section_id ?>" />
                                                         </div>
+
+                                                        <!-- append quiz container for section -->
+                                                        <div class="as-quiz-accordion-container-section-<?php echo $fetch_section_id; ?>">
+                                                            <?php if (!empty($fetch_section_quiz_id)) {
+                                                                foreach ($fetch_section_quiz_id as $quiz_id) { ?>
+                                                                    <div class="as-section-quiz-accordion">
+                                                                        <b><?php echo 'Quiz: ' . get_the_title($quiz_id); ?></b>
+                                                                        <a class="as-remove-section-quiz" data-quiz-section-id="<?php echo $fetch_section_id; ?>">Remove</a>
+                                                                        <input type="hidden" name="quiz_id[<?php echo $fetch_section_id; ?>][]" class="as-hidden-section-quiz-id" value="<?php echo $quiz_id; ?>" />
+                                                                    </div>
+                                                            <?php }
+                                                            } ?>
+                                                        </div>
                                                     </div>
+
+                                                    <!-- quiz add link for Section-->
+                                                    <div class="as-quiz-section-selection as-quiz-section-input-id-<?php echo $fetch_section_id ?>">
+                                                        <select class="as-quiz-selection-search-input-section form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-section-id="<?php echo $fetch_section_id ?>">
+                                                        </select>
+                                                        <a class="as-cancel-section-quiz" data-quiz-section-id="<?php echo $fetch_section_id ?>">Cancel</a>
+                                                    </div>
+                                                    <a class="as-icon-quiz as-section-quiz-inputfield-link" data-quiz-section-id="<?php echo $fetch_section_id ?>">Add Quiz Section</a>
+
                                                 <?php } ?>
                                             </div>
                                             <div class="as-section-container">
@@ -395,8 +418,10 @@ function as_create_course_data($post_id)
 
                         if (isset($section_ides[$chapter_id][$lesson_id][$topic_id])) {
                             foreach ($section_ides[$chapter_id][$lesson_id][$topic_id] as $section_id) {
+                                $quiz_id_section = isset($quiz_ides[$section_id]) ? $quiz_ides[$section_id] : null;
                                 $topic_data['sections'][] = array(
                                     'section_id' => $section_id,
+                                    'quiz_id' => $quiz_id_section
                                 );
                             }
                         }
