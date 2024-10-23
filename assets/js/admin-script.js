@@ -138,6 +138,9 @@ jQuery(document).on('click', '.as-add-chapter', function (e) {
                                     <b>${response.data.chapter_name}</b>
                                     <a class="as-remove-chapter" data-chapter-id="${response.data.chapter_id}">Remove</a>
                             </div>
+                            <!-- quiz appending -->
+                            <div class="as-quiz-accordion-container-${response.data.chapter_id}">
+                            </div>
                              <div class="as-lesson-accordion-container">
                             </div>
                             <div class="as-lesson-container">
@@ -148,10 +151,20 @@ jQuery(document).on('click', '.as-add-chapter', function (e) {
                                     </div>
                                     <a class="as-icon as-lesson-inputfield-link" data-chapter-id="${response.data.chapter_id}">New Lesson</a>
                             </div>
+                            <!-- quiz add link -->
+                            <div class="as-quiz-selection as-quiz-chapter-input-id-${response.data.chapter_id}">
+                                <select class="as-quiz-selection-search-input form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-chapter-id="${response.data.chapter_id}">
+                                </select>
+                                <a class="as-cancel-chapter-quiz" data-quiz-chapter-id="${response.data.chapter_id}">Cancel</a>
+                            </div>
+                            <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="${response.data.chapter_id}">Add Quiz</a>
                     </div>`
                 );
                 jQuery('.as-chapter-input-box').val('');
                 jQuery('.as-chapter-inputfield-link').show();
+
+                // Reinitialize Select 2
+                asInitialize();
             }
             else {
                 alert(response.data);
@@ -652,9 +665,8 @@ jQuery(document).on('click', '.as-cancel-chapter-quiz', function (e) {
     jQuery('.as-chapter-quiz-inputfield-link').show();
 });
 
-// get quiz data using ajax
-jQuery(document).ready(function () {
-    var selectedQuiz = [];
+// quiz selection function
+function asInitializeQuizSelection() {
     jQuery('.as-quiz-selection-search-input').select2({
         ajax: {
             url: as_quiz_selection_in_course.ajaxurl,
@@ -680,28 +692,53 @@ jQuery(document).ready(function () {
         },
         minimumInputLength: 3
     });
+}
 
-    // Handle the quiz selection and append it
+// Append the selected quiz to the chapter
+function asAppendSelectedQuiz(selectedQuiz, selectedQuizId, chapterId) {
+
+    var quizItem = `
+        <div class="as-chapter-quiz-accordion">
+            <b>Quiz: ${selectedQuiz}</b>
+            <a class="as-remove-chapter-quiz" data-quiz-chapter-id="${chapterId}">Remove</a>
+            <input type="hidden" name="quiz_id[${chapterId}][]" class="as-hidden-chapter-quiz-id" value="${selectedQuizId}" />
+        </div>`;
+    console.log(quizItem);
+
+    jQuery(`.as-quiz-accordion-container-${chapterId}`).append(quizItem);
+}
+
+// Handle quiz selection event
+function asHandleQuizSelection() {
     jQuery('.as-quiz-selection-search-input').on('select2:select', function (e) {
-        console.log("This is clickble");
         var selectedQuiz = e.params.data.text;
-        var selectedQuizId = e.params.data.id
+        var selectedQuizId = e.params.data.id;
         var chapterId = jQuery(this).data('quiz-chapter-id');
 
-        // Create the new quiz item
-        var quizItem = `<div class="as-chapter-quiz-accordion">
-        <b>Quiz: ${selectedQuiz}</b>
-        <a class="as-remove-chapter-quiz" data-quiz-chapter-id="${chapterId}">Remove</a>
-        <input type="hidden" name="quiz_id[${chapterId}][]" class="as-hidden-chapter-quiz-id" value="${selectedQuizId}" />
-    </div>`;
-        jQuery(`.as-quiz-accordion-container-${chapterId}`).append(quizItem);
+        asAppendSelectedQuiz(selectedQuiz, selectedQuizId, chapterId);
     });
+}
 
+// Handle quiz removal
+function asHandleQuizRemoval() {
     jQuery(document).on('click', '.as-remove-chapter-quiz', function () {
-        var chapterId = jQuery(this).data('quiz-chapter-id');
         jQuery(this).closest('.as-chapter-quiz-accordion').remove();
     });
+}
+
+// Initialize the functionalities
+function asInitialize() {
+    asInitializeQuizSelection();
+    asHandleQuizSelection();
+    asHandleQuizRemoval();
+}
+
+// get quiz data using ajax
+jQuery(document).ready(function () {
+    // Run the initialization
+    asInitialize();
 });
+
 
 
 

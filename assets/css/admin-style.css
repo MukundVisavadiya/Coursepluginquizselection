@@ -340,5 +340,5 @@ body #adminmenumain .wp-submenu>li a[href*="question-bank"]:after {
     border: 3px dotted #135e96;
     display: flex;
     justify-content: space-between;
-    margin: 0 5px;
+    margin: 5px;
 }

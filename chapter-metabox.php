@@ -48,13 +48,15 @@ function as_clts_post_create()
                     </div>
                     <!-- append quiz container -->
                     <div class="as-quiz-accordion-container-<?php echo $fetch_che_id; ?>">
-                        <?php if (!empty($fetch_chapter_quiz_id)) { ?>
-                            <div class="as-chapter-quiz-accordion">
-                                <b><?php echo get_the_title($fetch_chapter_quiz_id); ?></b>
-                                <a class="as-remove-chapter-quiz" data-quiz-chapter-id="<?php echo $fetch_che_id; ?>">Remove</a>
-                                <input type="hidden" name="quiz_id[<?php echo $fetch_che_id; ?>][]" class="as-hidden-chapter-quiz-id" value="<?php echo $quiz_id; ?>" />
-                            </div>
-                        <?php } ?>
+                        <?php if (!empty($fetch_chapter_quiz_id)) {
+                            foreach ($fetch_chapter_quiz_id as $quiz_id) { ?>
+                                <div class="as-chapter-quiz-accordion">
+                                    <b><?php echo 'Quiz: ' . get_the_title($quiz_id); ?></b>
+                                    <a class="as-remove-chapter-quiz" data-quiz-chapter-id="<?php echo $fetch_che_id; ?>">Remove</a>
+                                    <input type="hidden" name="quiz_id[<?php echo $fetch_che_id; ?>][]" class="as-hidden-chapter-quiz-id" value="<?php echo $quiz_id; ?>" />
+                                </div>
+                        <?php }
+                        } ?>
                     </div>
                     <div class="as-lesson-accordion-container <?php echo $sortable_class; ?>" id="as-sortable-lesson">
                         <?php foreach ($fetch_lessones as $fetch_lesson) {
@@ -304,10 +306,6 @@ add_action('wp_ajax_nopriv_as_romove_section_post', 'as_romove_section_post');
 // save course post data
 function as_create_course_data($post_id)
 {
-    // echo "<pre>";
-    // print_r($_POST);
-    // echo "</pre>";
-    // exit;
     $chapter_ides = isset($_POST['chapter_id']) ? $_POST['chapter_id'] : array();
     $lessones_ides = isset($_POST['lesson_id']) ? $_POST['lesson_id'] : array();
     $topic_ides = isset($_POST['topic_id']) ? $_POST['topic_id'] : array();
@@ -321,7 +319,7 @@ function as_create_course_data($post_id)
 
         $chapter_data = array(
             'chapter_id' => $chapter_id,
-            'quiz_id' => $quiz_ides[0],
+            'quiz_id' => $quiz_ides,
             'lessons' => array(),
         );
 
