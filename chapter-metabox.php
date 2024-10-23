@@ -85,12 +85,26 @@ function as_clts_post_create()
                                 <div class="as-topic-accordion-container <?php echo $sortable_class; ?>" id="as-sortable-topic">
                                     <?php foreach ($fetch_topices as $fetch_topic) {
                                         $fetch_topic_id = $fetch_topic['topic_id'];
-                                        $fetch_sections = $fetch_topic['sections'] ?>
+                                        $fetch_sections = $fetch_topic['sections'];
+                                        $fetch_topic_quiz_id = $fetch_topic['quiz_id']; ?>
                                         <div class="as-topic-accordion as-accordion-topic-<?php echo $fetch_topic_id ?>">
                                             <div class="as-accordion-item">
                                                 <b><?php echo get_the_title($fetch_topic_id); ?></b>
                                                 <a class="as-remove-fetch-topic" data-lesson-id="<?php echo $fetch_lesson_id ?>" data-chapter-id="<?php echo $fetch_che_id ?>" data-topic-id="<?php echo $fetch_topic_id ?>">Remove</a>
                                                 <input type="hidden" name="topic_id[<?php echo $fetch_che_id ?>][<?php echo $fetch_lesson_id ?>][]" class="as-hidden-topic-id" value="<?php echo $fetch_topic_id ?>" />
+                                            </div>
+
+                                            <!-- append quiz container for lesson -->
+                                            <div class="as-quiz-accordion-container-topic-<?php echo $fetch_topic_id; ?>">
+                                                <?php if (!empty($fetch_topic_quiz_id)) {
+                                                    foreach ($fetch_topic_quiz_id as $quiz_id) { ?>
+                                                        <div class="as-topic-quiz-accordion">
+                                                            <b><?php echo 'Quiz: ' . get_the_title($quiz_id); ?></b>
+                                                            <a class="as-remove-topic-quiz" data-quiz-topic-id="<?php echo $fetch_topic_id; ?>">Remove</a>
+                                                            <input type="hidden" name="quiz_id[<?php echo $fetch_topic_id; ?>][]" class="as-hidden-topic-quiz-id" value="<?php echo $quiz_id; ?>" />
+                                                        </div>
+                                                <?php }
+                                                } ?>
                                             </div>
 
                                             <div class="as-section-accordion-container <?php echo $sortable_class; ?>" id="as-sortable-section">
@@ -114,6 +128,15 @@ function as_clts_post_create()
                                                 <a class="as-icon as-section-inputfield-link" data-topic-id="<?php echo $fetch_topic_id ?>">New Section</a>
                                             </div>
                                         </div>
+
+                                        <!-- quiz add link for Topic-->
+                                        <div class="as-quiz-topic-selection as-quiz-topic-input-id-<?php echo $fetch_topic_id ?>">
+                                            <select class="as-quiz-selection-search-input-topic form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-topic-id="<?php echo $fetch_topic_id ?>">
+                                            </select>
+                                            <a class="as-cancel-topic-quiz" data-quiz-topic-id="<?php echo $fetch_topic_id ?>">Cancel</a>
+                                        </div>
+                                        <a class="as-icon-quiz as-topic-quiz-inputfield-link" data-quiz-topic-id="<?php echo $fetch_topic_id ?>">Add Quiz Topic</a>
+
                                     <?php } ?>
                                 </div>
                                 <div class="as-topic-container">
@@ -132,7 +155,7 @@ function as_clts_post_create()
                                 </select>
                                 <a class="as-cancel-lesson-quiz" data-quiz-lesson-id="<?php echo $fetch_lesson_id ?>">Cancel</a>
                             </div>
-                            <a class="as-icon as-lesson-quiz-inputfield-link" data-quiz-lesson-id="<?php echo $fetch_lesson_id ?>">Add Quiz Lesson</a>
+                            <a class="as-icon-quiz as-lesson-quiz-inputfield-link" data-quiz-lesson-id="<?php echo $fetch_lesson_id ?>">Add Quiz Lesson</a>
 
                         <?php } ?>
                     </div>
@@ -151,7 +174,7 @@ function as_clts_post_create()
                         </select>
                         <a class="as-cancel-chapter-quiz" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">Cancel</a>
                     </div>
-                    <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">Add Quiz Chapter</a>
+                    <a class="as-icon-quiz as-chapter-quiz-inputfield-link" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">Add Quiz Chapter</a>
                 </div>
             <?php } ?>
         <?php } ?>
@@ -362,9 +385,11 @@ function as_create_course_data($post_id)
                 if (isset($topic_ides[$chapter_id][$lesson_id])) {
 
                     foreach ($topic_ides[$chapter_id][$lesson_id] as $topic_id) {
+                        $quiz_id_topic = isset($quiz_ides[$topic_id]) ? $quiz_ides[$topic_id] : null;
 
                         $topic_data = array(
                             "topic_id" => $topic_id,
+                            "quiz_id" => $quiz_id_topic,
                             "sections" => array(),
                         );
 

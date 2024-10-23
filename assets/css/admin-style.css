@@ -10,11 +10,27 @@ h6 {
 .as-chapter-inputfield-link,
 .as-lesson-inputfield-link,
 .as-topic-inputfield-link,
-.as-section-inputfield-link,
-.as-chapter-quiz-inputfield-link,
-.as-lesson-quiz-inputfield-link {
+.as-section-inputfield-link {
     cursor: pointer;
     color: rgb(4, 122, 248);
+}
+
+
+.as-chapter-quiz-inputfield-link,
+.as-lesson-quiz-inputfield-link,
+.as-topic-quiz-inputfield-link {
+    cursor: pointer;
+    color: #0eab00
+}
+
+.as-icon-quiz:before {
+    content: '+';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    font-size: 17px;
+    color: #0eab00;
+    padding: 2px;
 }
 
 
@@ -23,7 +39,11 @@ h6 {
 .as-lesson-container,
 .as-section-container,
 .as-topic-accordion,
-.as-section-accordion {
+.as-section-accordion,
+.as-quiz-lesson-selection,
+.as-lesson-quiz-inputfield-link,
+.as-topic-quiz-inputfield-link,
+.as-quiz-topic-selection {
     margin-left: 40px;
 }
 
@@ -53,7 +73,8 @@ h6 {
 .as-add-section,
 .as-cancel-section,
 .as-cancel-chapter-quiz,
-.as-cancel-lesson-quiz {
+.as-cancel-lesson-quiz,
+.as-cancel-topic-quiz {
     background-color: #008CBA;
     border: none;
     border-radius: 8px;
@@ -73,7 +94,8 @@ h6 {
 .as-cancel-topic,
 .as-cancel-section,
 .as-cancel-chapter-quiz,
-.as-cancel-lesson-quiz {
+.as-cancel-lesson-quiz,
+.as-cancel-topic-quiz {
     background-color: rgb(180, 180, 180) !important;
     color: white !important;
 }
@@ -83,7 +105,8 @@ h6 {
 .as-cancel-topic:hover,
 .as-cancel-section:hover,
 .as-cancel-chapter-quiz:hover,
-.as-cancel-lesson-quiz:hover {
+.as-cancel-lesson-quiz:hover,
+.as-cancel-topic-quiz:hover {
     background-color: rgb(77, 76, 76);
     color: white;
 }
@@ -135,7 +158,8 @@ h6 {
 .as-topic-input-field,
 .as-section-input-field,
 .as-quiz-selection,
-.as-quiz-lesson-selection {
+.as-quiz-lesson-selection,
+.as-quiz-topic-selection {
     display: none;
 }
 
@@ -148,7 +172,8 @@ a.as-remove-fetch-lesson,
 a.as-remove-fetch-topic,
 a.as-remove-fetch-section,
 a.as-remove-chapter-quiz,
-a.as-remove-lesson-quiz {
+a.as-remove-lesson-quiz,
+a.as-remove-topic-quiz {
     color: red;
     cursor: pointer;
     text-decoration: none;
@@ -342,15 +367,11 @@ body #adminmenumain .wp-submenu>li a[href*="question-bank"]:after {
 
 /* ........................ quiz selection in course ............................... */
 .as-accordion-item-container .as-chapter-quiz-accordion,
-.as-accordion-item-container .as-lesson-quiz-accordion {
+.as-accordion-item-container .as-lesson-quiz-accordion,
+.as-accordion-item-container .as-topic-quiz-accordion {
     padding: 10px;
-    border: 3px dotted #135e96;
+    border: 3px dotted #0eab00;
     display: flex;
     justify-content: space-between;
     margin: 5px;
-}
-
-.as-quiz-lesson-selection,
-.as-lesson-quiz-inputfield-link {
-    margin-left: 40px;
 }

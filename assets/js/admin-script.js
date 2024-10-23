@@ -157,7 +157,7 @@ jQuery(document).on('click', '.as-add-chapter', function (e) {
                                 </select>
                                 <a class="as-cancel-chapter-quiz" data-quiz-chapter-id="${response.data.chapter_id}">Cancel</a>
                             </div>
-                            <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="${response.data.chapter_id}">Add Quiz Chapter</a>
+                            <a class="as-icon-quiz as-chapter-quiz-inputfield-link" data-quiz-chapter-id="${response.data.chapter_id}">Add Quiz Chapter</a>
                     </div>`
                 );
                 jQuery('.as-chapter-input-box').val('');
@@ -265,7 +265,7 @@ jQuery(document).on('click', '.as-add-lesson', function (e) {
                             </select>
                             <a class="as-cancel-lesson-quiz" data-quiz-lesson-id="${response.data.lesson_id}">Cancel</a>
                         </div>
-                        <a class="as-icon as-lesson-quiz-inputfield-link" data-quiz-lesson-id="${response.data.lesson_id}">Add Quiz Lesson</a>`
+                        <a class="as-icon-quiz as-lesson-quiz-inputfield-link" data-quiz-lesson-id="${response.data.lesson_id}">Add Quiz Lesson</a>`
                 );
                 jQuery('.as-lesson-input-box').val('');
                 jQuery('.as-lesson-inputfield-link').show();
@@ -352,6 +352,8 @@ jQuery(document).on('click', '.as-add-topic', function (e) {
                                 <b>${response.data.topic_name}</b>
                                 <a class="as-remove-topic" data-chapter-id="${chapterId}" data-lesson-id="${lessonId}" data-topic-id="${response.data.topic_id}">Remove</a>
                         </div> 
+                        <div class="as-quiz-accordion-container-topic-${response.data.topic_id}">
+                        </div>
                         <div class="as-section-accordion-container">
                         </div>
                         <div class="as-section-container">
@@ -362,10 +364,18 @@ jQuery(document).on('click', '.as-add-topic', function (e) {
                                 </div>
                                 <a class="as-icon as-section-inputfield-link" data-topic-id="${response.data.topic_id}">New Section</a>
                         </div>
-                    </div>`
+                    </div>
+                    <div class="as-quiz-topic-selection as-quiz-topic-input-id-${response.data.topic_id}">
+                        <select class="as-quiz-selection-search-input-topic form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-topic-id="${response.data.topic_id}">
+                        </select>
+                        <a class="as-cancel-topic-quiz" data-quiz-topic-id="${response.data.topic_id}">Cancel</a>
+                    </div>
+                    <a class="as-icon-quiz as-topic-quiz-inputfield-link" data-quiz-topic-id="${response.data.topic_id}">Add Quiz Topic</a>
+`
                 );
                 jQuery('.as-topic-input-box').val('');
                 jQuery('.as-topic-inputfield-link').show();
+                asInitializeTopic();
                 let topicDiv = jQuery('.as-topic-accordion-container .as-topic-accordion').last();
                 topicDiv.addClass(`as-accordion-topic-${response.data.topic_id}`);
             } else {
@@ -796,8 +806,7 @@ function asInitializeQuizSelectionLesson() {
 }
 
 // Append the selected quiz to the lesson
-function asAppendSelectedQuizLesson(selectedQuiz, selectedQuizId, lessonId, chapterId) {
-    console.log("This is comeing here");
+function asAppendSelectedQuizLesson(selectedQuiz, selectedQuizId, lessonId) {
     var quizItem = `
         <div class="as-lesson-quiz-accordion">
             <b>Quiz: ${selectedQuiz}</b>
@@ -813,10 +822,9 @@ function asHandleQuizSelectionLesson() {
     jQuery('.as-quiz-selection-search-input-lesson').on('select2:select', function (e) {
         var selectedQuiz = e.params.data.text;
         var selectedQuizId = e.params.data.id;
-        var chapterId = jQuery(this).data('quiz-chapter-id');
         var lessonId = jQuery(this).data("quiz-lesson-id");
 
-        asAppendSelectedQuizLesson(selectedQuiz, selectedQuizId, lessonId, chapterId);
+        asAppendSelectedQuizLesson(selectedQuiz, selectedQuizId, lessonId);
     });
 }
 
@@ -838,6 +846,94 @@ function asInitializeLesson() {
 jQuery(document).ready(function () {
     // Run the initialization
     asInitializeLesson();
+});
+
+// quiz selection in course logic - add quiz for Topic
+jQuery(document).on('click', '.as-topic-quiz-inputfield-link', function (e) {
+    e.preventDefault();
+    let topicId = jQuery(this).data('quiz-topic-id');
+    jQuery(`.as-quiz-topic-input-id-${topicId}`).show();
+    jQuery(this).hide();
+});
+
+// Cancel Quiz Search 
+jQuery(document).on('click', '.as-cancel-topic-quiz', function (e) {
+    e.preventDefault();
+    let topicId = jQuery(this).data('quiz-topic-id');
+    jQuery(this).closest(`.as-quiz-topic-input-id-${topicId}`).hide();
+    jQuery('.as-topic-quiz-inputfield-link').show();
+});
+
+// quiz selection function
+function asInitializeQuizSelectionTopic() {
+    jQuery('.as-quiz-selection-search-input-topic').select2({
+        ajax: {
+            url: as_quiz_selection_in_course.ajaxurl,
+            type: 'POST',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    action: 'as_quiz_selection_in_course',
+                    search_query: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: jQuery.map(data, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.title
+                        };
+                    })
+                };
+            }
+        },
+        minimumInputLength: 3
+    });
+}
+
+// Append the selected quiz to the Topic
+function asAppendSelectedQuizTopic(selectedQuiz, selectedQuizId, topicId) {
+    var quizItem = `
+        <div class="as-topic-quiz-accordion">
+            <b>Quiz: ${selectedQuiz}</b>
+            <a class="as-remove-topic-quiz" data-quiz-topic-id="${topicId}">Remove</a>
+            <input type="hidden" name="quiz_id[${topicId}][]" class="as-hidden-topic-quiz-id" value="${selectedQuizId}" />
+        </div>`;
+
+    jQuery(`.as-quiz-accordion-container-topic-${topicId}`).append(quizItem);
+}
+
+// Handle quiz selection event
+function asHandleQuizSelectionTopic() {
+    jQuery('.as-quiz-selection-search-input-topic').on('select2:select', function (e) {
+        var selectedQuiz = e.params.data.text;
+        var selectedQuizId = e.params.data.id;
+        var topicId = jQuery(this).data("quiz-topic-id");
+
+        asAppendSelectedQuizTopic(selectedQuiz, selectedQuizId, topicId);
+    });
+}
+
+// Handle quiz removal
+function asHandleQuizRemovalTopic() {
+    jQuery(document).on('click', '.as-remove-topic-quiz', function () {
+        jQuery(this).closest('.as-topic-quiz-accordion').remove();
+    });
+}
+
+// Initialize the functionalities
+function asInitializeTopic() {
+    asInitializeQuizSelectionTopic();
+    asHandleQuizSelectionTopic();
+    asHandleQuizRemovalTopic();
+}
+
+// get quiz data using ajax
+jQuery(document).ready(function () {
+    // Run the initialization
+    asInitializeTopic();
 });
 
 
