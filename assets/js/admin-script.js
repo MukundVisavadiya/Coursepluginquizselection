@@ -157,7 +157,7 @@ jQuery(document).on('click', '.as-add-chapter', function (e) {
                                 </select>
                                 <a class="as-cancel-chapter-quiz" data-quiz-chapter-id="${response.data.chapter_id}">Cancel</a>
                             </div>
-                            <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="${response.data.chapter_id}">Add Quiz</a>
+                            <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="${response.data.chapter_id}">Add Quiz Chapter</a>
                     </div>`
                 );
                 jQuery('.as-chapter-input-box').val('');
@@ -245,6 +245,8 @@ jQuery(document).on('click', '.as-add-lesson', function (e) {
                                 <b>${response.data.lesson_name}</b>
                                 <a class="as-remove-lesson" data-chapter-id="${chapterId}" data-lesson-id="${response.data.lesson_id}">Remove</a>
                             </div> 
+                            <div class="as-quiz-accordion-container-lesson-${response.data.lesson_id}">
+                            </div>
                             <div class="as-topic-accordion-container">
                             </div>
                             <div class="as-topic-container">
@@ -255,10 +257,20 @@ jQuery(document).on('click', '.as-add-lesson', function (e) {
                                     </div>
                                     <a class="as-icon as-topic-inputfield-link" data-lesson-id="${response.data.lesson_id}">New Topic</a>
                             </div>
-                       </div>`
+                        </div>
+
+                        <!-- quiz add link for lesson-->
+                        <div class="as-quiz-lesson-selection as-quiz-lesson-input-id-${response.data.lesson_id}">
+                            <select class="as-quiz-selection-search-input-lesson form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-lesson-id="${response.data.lesson_id}">
+                            </select>
+                            <a class="as-cancel-lesson-quiz" data-quiz-lesson-id="${response.data.lesson_id}">Cancel</a>
+                        </div>
+                        <a class="as-icon as-lesson-quiz-inputfield-link" data-quiz-lesson-id="${response.data.lesson_id}">Add Quiz Lesson</a>`
                 );
                 jQuery('.as-lesson-input-box').val('');
                 jQuery('.as-lesson-inputfield-link').show();
+                asInitializeLesson();
+
                 let lessonDiv = jQuery('.as-lesson-accordion-container .as-lesson-accordion').last();
                 lessonDiv.addClass(`as-accordion-lesson-${response.data.lesson_id}`);
             } else {
@@ -649,7 +661,7 @@ jQuery(document).ready(function () {
 
 });
 
-// quiz selection in course logic - add quiz
+// quiz selection in course logic - add quiz for chapter
 jQuery(document).on('click', '.as-chapter-quiz-inputfield-link', function (e) {
     e.preventDefault();
     let chapterId = jQuery(this).data('quiz-chapter-id');
@@ -703,7 +715,6 @@ function asAppendSelectedQuiz(selectedQuiz, selectedQuizId, chapterId) {
             <a class="as-remove-chapter-quiz" data-quiz-chapter-id="${chapterId}">Remove</a>
             <input type="hidden" name="quiz_id[${chapterId}][]" class="as-hidden-chapter-quiz-id" value="${selectedQuizId}" />
         </div>`;
-    console.log(quizItem);
 
     jQuery(`.as-quiz-accordion-container-${chapterId}`).append(quizItem);
 }
@@ -739,6 +750,95 @@ jQuery(document).ready(function () {
     asInitialize();
 });
 
+// quiz selection in course logic - add quiz for lesson
+jQuery(document).on('click', '.as-lesson-quiz-inputfield-link', function (e) {
+    e.preventDefault();
+    let lessonId = jQuery(this).data('quiz-lesson-id');
+    jQuery(`.as-quiz-lesson-input-id-${lessonId}`).show();
+    jQuery(this).hide();
+});
+
+// Cancel Quiz Search 
+jQuery(document).on('click', '.as-cancel-lesson-quiz', function (e) {
+    e.preventDefault();
+    let lessonId = jQuery(this).data('quiz-lesson-id');
+    jQuery(this).closest(`.as-quiz-lesson-input-id-${lessonId}`).hide();
+    jQuery('.as-lesson-quiz-inputfield-link').show();
+});
+
+// quiz selection function
+function asInitializeQuizSelectionLesson() {
+    jQuery('.as-quiz-selection-search-input-lesson').select2({
+        ajax: {
+            url: as_quiz_selection_in_course.ajaxurl,
+            type: 'POST',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    action: 'as_quiz_selection_in_course',
+                    search_query: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: jQuery.map(data, function (item) {
+                        return {
+                            id: item.id,
+                            text: item.title
+                        };
+                    })
+                };
+            }
+        },
+        minimumInputLength: 3
+    });
+}
+
+// Append the selected quiz to the lesson
+function asAppendSelectedQuizLesson(selectedQuiz, selectedQuizId, lessonId, chapterId) {
+    console.log("This is comeing here");
+    var quizItem = `
+        <div class="as-lesson-quiz-accordion">
+            <b>Quiz: ${selectedQuiz}</b>
+            <a class="as-remove-lesson-quiz" data-quiz-lesson-id="${lessonId}">Remove</a>
+            <input type="hidden" name="quiz_id[${lessonId}][]" class="as-hidden-lesson-quiz-id" value="${selectedQuizId}" />
+        </div>`;
+
+    jQuery(`.as-quiz-accordion-container-lesson-${lessonId}`).append(quizItem);
+}
+
+// Handle quiz selection event
+function asHandleQuizSelectionLesson() {
+    jQuery('.as-quiz-selection-search-input-lesson').on('select2:select', function (e) {
+        var selectedQuiz = e.params.data.text;
+        var selectedQuizId = e.params.data.id;
+        var chapterId = jQuery(this).data('quiz-chapter-id');
+        var lessonId = jQuery(this).data("quiz-lesson-id");
+
+        asAppendSelectedQuizLesson(selectedQuiz, selectedQuizId, lessonId, chapterId);
+    });
+}
+
+// Handle quiz removal
+function asHandleQuizRemovalLesson() {
+    jQuery(document).on('click', '.as-remove-lesson-quiz', function () {
+        jQuery(this).closest('.as-lesson-quiz-accordion').remove();
+    });
+}
+
+// Initialize the functionalities
+function asInitializeLesson() {
+    asInitializeQuizSelectionLesson();
+    asHandleQuizSelectionLesson();
+    asHandleQuizRemovalLesson();
+}
+
+// get quiz data using ajax
+jQuery(document).ready(function () {
+    // Run the initialization
+    asInitializeLesson();
+});
 
 
 

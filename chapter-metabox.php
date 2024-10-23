@@ -46,7 +46,7 @@ function as_clts_post_create()
                         <a class="as-remove-fetch-chapter" data-chapter-id="<?php echo $fetch_che_id ?>">Remove</a>
                         <input type="hidden" name="chapter_id[]" class="as-hidden-chepter-id" value="<?php echo $fetch_che_id ?>" />
                     </div>
-                    <!-- append quiz container -->
+                    <!-- append quiz container for chapter -->
                     <div class="as-quiz-accordion-container-<?php echo $fetch_che_id; ?>">
                         <?php if (!empty($fetch_chapter_quiz_id)) {
                             foreach ($fetch_chapter_quiz_id as $quiz_id) { ?>
@@ -61,12 +61,26 @@ function as_clts_post_create()
                     <div class="as-lesson-accordion-container <?php echo $sortable_class; ?>" id="as-sortable-lesson">
                         <?php foreach ($fetch_lessones as $fetch_lesson) {
                             $fetch_lesson_id = $fetch_lesson['lesson_id'];
+                            $fetch_lesson_quiz_id = $fetch_lesson['quiz_id'];
                             $fetch_topices = $fetch_lesson['topics'] ?>
                             <div class="as-lesson-accordion as-accordion-lesson-<?php echo $fetch_lesson_id; ?>">
                                 <div class="as-accordion-item">
                                     <b><?php echo get_the_title($fetch_lesson_id); ?></b>
                                     <a class="as-remove-fetch-lesson" data-lesson-id="<?php echo $fetch_lesson_id ?>" data-chapter-id="<?php echo $fetch_che_id ?>">Remove</a>
                                     <input type="hidden" name="lesson_id[<?php echo $fetch_che_id ?>][]" class="as-hidden-lesson-id" value="<?php echo $fetch_lesson_id ?>" />
+                                </div>
+
+                                <!-- append quiz container for lesson -->
+                                <div class="as-quiz-accordion-container-lesson-<?php echo $fetch_lesson_id; ?>">
+                                    <?php if (!empty($fetch_lesson_quiz_id)) {
+                                        foreach ($fetch_lesson_quiz_id as $quiz_id) { ?>
+                                            <div class="as-lesson-quiz-accordion">
+                                                <b><?php echo 'Quiz: ' . get_the_title($quiz_id); ?></b>
+                                                <a class="as-remove-lesson-quiz" data-quiz-lesson-id="<?php echo $fetch_lesson_id; ?>">Remove</a>
+                                                <input type="hidden" name="quiz_id[<?php echo $fetch_lesson_id; ?>][]" class="as-hidden-leson-quiz-id" value="<?php echo $quiz_id; ?>" />
+                                            </div>
+                                    <?php }
+                                    } ?>
                                 </div>
                                 <div class="as-topic-accordion-container <?php echo $sortable_class; ?>" id="as-sortable-topic">
                                     <?php foreach ($fetch_topices as $fetch_topic) {
@@ -111,6 +125,15 @@ function as_clts_post_create()
                                     <a class="as-icon as-topic-inputfield-link" data-lesson-id="<?php echo $fetch_lesson_id ?>">New Topic</a>
                                 </div>
                             </div>
+
+                            <!-- quiz add link for lesson-->
+                            <div class="as-quiz-lesson-selection as-quiz-lesson-input-id-<?php echo $fetch_lesson_id ?>">
+                                <select class="as-quiz-selection-search-input-lesson form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-lesson-id="<?php echo $fetch_lesson_id ?>">
+                                </select>
+                                <a class="as-cancel-lesson-quiz" data-quiz-lesson-id="<?php echo $fetch_lesson_id ?>">Cancel</a>
+                            </div>
+                            <a class="as-icon as-lesson-quiz-inputfield-link" data-quiz-lesson-id="<?php echo $fetch_lesson_id ?>">Add Quiz Lesson</a>
+
                         <?php } ?>
                     </div>
                     <div class="as-lesson-container">
@@ -122,13 +145,13 @@ function as_clts_post_create()
                         <a class="as-icon as-lesson-inputfield-link" data-chapter-id="<?php echo $fetch_che_id ?>">New Lesson</a>
                     </div>
 
-                    <!-- quiz add link -->
+                    <!-- quiz add link for Chapter -->
                     <div class="as-quiz-selection as-quiz-chapter-input-id-<?php echo $fetch_che_id ?>">
                         <select class="as-quiz-selection-search-input form-control" data-placeholder="Select a Quiz......." style="width:90%;" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">
                         </select>
                         <a class="as-cancel-chapter-quiz" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">Cancel</a>
                     </div>
-                    <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">Add Quiz</a>
+                    <a class="as-icon as-chapter-quiz-inputfield-link" data-quiz-chapter-id="<?php echo $fetch_che_id ?>">Add Quiz Chapter</a>
                 </div>
             <?php } ?>
         <?php } ?>
@@ -310,16 +333,17 @@ function as_create_course_data($post_id)
     $lessones_ides = isset($_POST['lesson_id']) ? $_POST['lesson_id'] : array();
     $topic_ides = isset($_POST['topic_id']) ? $_POST['topic_id'] : array();
     $section_ides = isset($_POST['section_id']) ? $_POST['section_id'] : array();
-    $quiz_ides_chapteres = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : array();
+    $quiz_ides = isset($_POST['quiz_id']) ? $_POST['quiz_id'] : array();
+
 
     $course_data = array();
 
     foreach ($chapter_ides as $chapter_id) {
-        $quiz_ides = isset($quiz_ides_chapteres[$chapter_id]) ? $quiz_ides_chapteres[$chapter_id] : null;
+        $quiz_id = isset($quiz_ides[$chapter_id]) ?  $quiz_ides[$chapter_id] : null;
 
         $chapter_data = array(
             'chapter_id' => $chapter_id,
-            'quiz_id' => $quiz_ides,
+            'quiz_id' =>  $quiz_id,
             'lessons' => array(),
         );
 
@@ -327,9 +351,11 @@ function as_create_course_data($post_id)
         if (isset($lessones_ides[$chapter_id])) {
 
             foreach ($lessones_ides[$chapter_id] as $lesson_id) {
+                $quiz_id_lesson = isset($quiz_ides[$lesson_id]) ? $quiz_ides[$lesson_id] : null;
 
                 $lesson_data = array(
                     'lesson_id' => $lesson_id,
+                    'quiz_id' =>  $quiz_id_lesson,
                     'topics' => array(),
                 );
 
@@ -362,6 +388,8 @@ function as_create_course_data($post_id)
 
     if (!empty($course_data)) {
         update_post_meta($post_id, 'course_data', $course_data);
+    } else {
+        update_post_meta($post_id, 'course_data', array());
     }
 }
 add_action('save_post', 'as_create_course_data');
