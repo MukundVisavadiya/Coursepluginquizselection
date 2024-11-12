@@ -29,6 +29,9 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
 ), ARRAY_A);
 
 $progress_data = as_calculate_course_progress($course_id, $user_id);
+echo "<pre>";
+print_r($progress_data['testing']);
+echo "</pre>";
 ?>
 
 <main class="as-dashboard">
@@ -216,6 +219,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                     </div>
                             <?php endwhile;
                             endif; ?>
+
                         </div>
 
                         <div class="as-chapter-accordion-list">
@@ -395,13 +399,28 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 }
                                 ?>
                             </div>
+                            <!-- Topic Quiz -->
+                            <?php if (!empty($topic_data['quiz_id'])) {
+                                foreach ($topic_data['quiz_id'] as $quiz_topic_id) {
+                                    $quiz_topic_meta_slug = get_post_field('post_name', $quiz_topic_id);
+                            ?>
+                                    <div class="as-topic-single-page-accordion">
+                                        <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
+                                            <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                            <?php
+                                            echo '<p>' . get_the_title($quiz_topic_id) . '</p>';
+                                            ?>
+                                        </a>
+                                    </div>
+                            <?php
+                                }
+                            } ?>
 
                             <?php
 
                             foreach ($section_dataes as $section_data) {
                                 $section_id = $section_data['section_id'];
                                 $section_meta_slug = get_post_field('post_name', $section_id);
-
                             ?>
                                 <div class="as-section-topic-single-page-accordion as-section-accordion-grand-grandchild-<?php echo $topic_id; ?>">
                                     <a href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/sections/' . $section_meta_slug . '/' ?>">
@@ -414,6 +433,23 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                         ?>
                                     </a>
                                 </div>
+
+                                <!-- Section Quiz -->
+                                <?php if (!empty($section_data['quiz_id'])) {
+                                    foreach ($section_data['quiz_id'] as $quiz_id) {
+                                        $quiz_meta_slug = get_post_field('post_name', $quiz_id);
+                                ?>
+                                        <div class="as-section-quiz-accordion">
+                                            <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/sections/' . $section_meta_slug . '/quiz/' . $quiz_meta_slug . '/' ?>">
+                                                <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                                <?php
+                                                echo '<p>' . get_the_title($quiz_id) . '</p>';
+                                                ?>
+                                            </a>
+                                        </div>
+                                <?php
+                                    }
+                                } ?>
             <?php
                             }
                         }

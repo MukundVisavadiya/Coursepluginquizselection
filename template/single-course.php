@@ -79,8 +79,26 @@ while (have_posts()) {
                                 ?>
                                 <i class="fa-solid fa-angle-up"></i>
                             </div>
-                        <?php } ?>
+                        <?php
+                        }
+                        ?>
                     </div>
+                    <!-- Chapter Quiz -->
+                    <?php if (!empty($course_data['quiz_id'])) {
+                        foreach ($course_data['quiz_id'] as $quiz_chapter_id) {
+                            $quiz_chapter_meta_slug = get_post_field('post_name', $quiz_chapter_id);
+                    ?>
+                            <div class="as-chapter-quiz-accordion">
+                                <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug   . '/quiz/' .  $quiz_chapter_meta_slug . '/' ?>">
+                                    <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                    <?php
+                                    echo '<p>' . get_the_title($quiz_chapter_id) . '</p>';
+                                    ?>
+                                </a>
+                            </div>
+                    <?php
+                        }
+                    } ?>
 
                     <?php
 
@@ -117,7 +135,26 @@ while (have_posts()) {
                                     </div>
                                 </div>
                             </div>
+
+
+
                         <?php } ?>
+                        <!-- Lesson Quiz -->
+                        <?php if (!empty($lesson_data['quiz_id'])) {
+                            foreach ($lesson_data['quiz_id'] as $quiz_lesson_id) {
+                                $quiz_lesson_meta_slug = get_post_field('post_name', $quiz_lesson_id);
+                        ?>
+                                <div class="as-single-chapter-lesson-quiz-accordion as-lesson-accordion-child-<?php echo $chapter_id; ?>">
+                                    <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
+                                        <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                        <?php
+                                        echo '<p>' . get_the_title($quiz_lesson_id) . '</p>';
+                                        ?>
+                                    </a>
+                                </div>
+                        <?php
+                            }
+                        } ?>
 
                         <?php
                         foreach ($topic_dataes as $topic_data) {
@@ -153,13 +190,31 @@ while (have_posts()) {
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Topic Quiz -->
                                 <?php
                             }
+
+                            if (!empty($topic_data['quiz_id'])) {
+                                foreach ($topic_data['quiz_id'] as $quiz_topic_id) {
+                                    $quiz_topic_meta_slug = get_post_field('post_name', $quiz_topic_id);
+                                ?>
+                                    <div class="as-topic-chapter-single-page-accordion-quiz as-topic-accordion-grandchild-<?php echo $lesson_id; ?>" data-topic-id="<?php echo $topic_id ?>">
+                                        <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
+                                            <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                            <?php
+                                            echo '<p>' . get_the_title($quiz_topic_id) . '</p>';
+                                            ?>
+                                        </a>
+                                    </div>
+                            <?php
+                                }
+                            } ?>
+                            <?php
                             foreach ($section_dataes as $section_data) {
                                 $section_id = $section_data['section_id'];
                                 $section_meta_slug = get_post_field('post_name', $section_id);
                                 if (get_post_status($chapter_id) === 'future') {
-                                ?>
+                            ?>
                                     <div class="as-section-accordion-grand-grandchild as-section-accordion-grand-grandchild-<?php echo $topic_id; ?>">
                                         <?php echo '<p style="cursor:default">' . get_the_title($topic_id) . '</p>'; ?>
                                     </div>
@@ -175,6 +230,22 @@ while (have_posts()) {
                                             ?>
                                         </a>
                                     </div>
+                                    <!-- Section Quiz -->
+                                    <?php if (!empty($section_data['quiz_id'])) {
+                                        foreach ($section_data['quiz_id'] as $quiz_id) {
+                                            $quiz_meta_slug = get_post_field('post_name', $quiz_id);
+                                    ?>
+                                            <div class="as-single-chapter-section-quiz-accordion as-section-accordion-grand-grandchild-<?php echo $topic_id; ?>">
+                                                <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/sections/' . $section_meta_slug . '/quiz/' . $quiz_meta_slug . '/' ?>">
+                                                    <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                                    <?php
+                                                    echo '<p>' . get_the_title($quiz_id) . '</p>';
+                                                    ?>
+                                                </a>
+                                            </div>
+                                    <?php
+                                        }
+                                    } ?>
                             <?php
                                 }
                             } ?>

@@ -212,6 +212,7 @@ jQuery(document).ready(function () {
   var topicSlug = jQuery(".as-topic-slug").val();
 
   jQuery('.as-mark-complete-section-btn').on('click', function () {
+
     jQuery.ajax({
       url: as_mark_complete_section.ajaxurl,
       type: "POST",
@@ -231,13 +232,20 @@ jQuery(document).ready(function () {
         all_sections: JSON.stringify(allSections)
       },
       success: function (response) {
+        console.log(response);
         if (response.success) {
-          if (response.data.next_section_url) {
+          if (response.data.first_quiz_url !== '#') {
+            window.location.href = response.data.first_quiz_url;
+          }
+          else if (response.data.next_section_url !== '#') {
             window.location.href = response.data.next_section_url;
           }
+          else if (response.data.next_quiz_url !== '#') {
+            window.location.href = response.data.next_quiz_url;
+          }
         } else {
-          if (response.data && response.data.next_section_url) {
-            window.location.href = response.data.next_section_url;
+          if (response.data && response.data.next_topic_url) {
+            window.location.href = response.data.next_topic_url;
           } else {
             console.log("No next section or fallback URL available.");
           }
@@ -413,7 +421,6 @@ jQuery(document).ready(function () {
   // start the quiz timer
   function startTimer() {
     startTime = new Date().getTime();
-    console.log(startTime);
     timerInterval = setInterval(function () {
       let currentTime = new Date().getTime();
       let elapsedTime = currentTime - startTime;
@@ -530,10 +537,13 @@ jQuery(document).ready(function () {
             jQuery('.as-quiz-result-processing').hide();
             quizQuestionsContainer.hide();
 
-            if (response.success) {
+            if (response.success === true) {
+              var quiz_url = jQuery('#finish-quiz').data("quiz-url");
+              var nextSectionUrl = jQuery('.as-next-section-quiz-url').val() || '';
+              var previousSectonUrl = jQuery('.as-previous-section-quiz-url').val() || '';
+              console.log(nextSectionUrl);
 
               jQuery('.as-quiz-results').empty();
-
 
               const totalScoreHtml = `<div class="as-score-summary">
                 <h3>Results: </h3>
@@ -543,8 +553,10 @@ jQuery(document).ready(function () {
                     <p> ${response.data.message}</p>
                   </div>
                   <div class="as-review-answers-wrapper">
+                    <a class="as-clts-quiz-previous-butt" href="${previousSectonUrl}">&laquo; Previous</a>
                     <a class="as-review-answers">See Correct/Wrong</a>
-                    <a class="as-restart-quizz" href="${response.data.url}">Restart Quize</a>
+                    <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
+                    <a class="as-clts-quiz-next-butt" href="${nextSectionUrl}">Next &raquo; </a>
                   </div>
                 </div>`;
               jQuery('.as-quiz-results').append(totalScoreHtml);
@@ -603,6 +615,40 @@ jQuery(document).ready(function () {
     }
   });
 
+});
+
+// section quiz completed manage
+jQuery(document).ready(function () {
+  var courseId = jQuery('.as-course-id').val();
+  var chapterId = jQuery(".as-chapter-id").val();
+  var lessonId = jQuery(".as-lesson-id").val();
+  var topicId = jQuery(".as-topic-id").val();
+  var sectionId = jQuery(".as-section-id").val();
+  var quizId = jQuery(".as_quiz_id").val();
+
+  jQuery('.as-finish-quiz-button').on('click', function () {
+    jQuery.ajax({
+      url: as_quiz_ajax_progress_section.ajaxurl,
+      type: "POST",
+      data: {
+        action: "as_quiz_ajax_progress_section",
+        nonce: as_quiz_ajax_progress_section.nonce,
+        course_id: courseId,
+        chapter_id: chapterId,
+        lesson_id: lessonId,
+        topic_id: topicId,
+        section_id: sectionId,
+        quiz_id: quizId,
+      },
+      success: function (response) {
+        console.log(response.data.success);
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX call error:", status, error);
+      }
+    });
+
+  });
 });
 
 

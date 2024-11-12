@@ -210,22 +210,23 @@ body {
     display: block;
 }
 
-.as-sildebar-chapter-list .as-sidebar-chapter-accordion-parent {
+.as-sildebar-chapter-list .as-sidebar-chapter-accordion-parent,
+.as-sidebar-chapter-quiz-accordion {
     background-color: #666666;
     color: #ffffff;
-    /* cursor: pointer; */
     padding: 18px;
     font-size: 18px;
     width: 100%;
+    margin-bottom: 2px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.as-sildebar-chapter-list .as-lesson-accordion-sidebar-child {
+.as-sildebar-chapter-list .as-lesson-accordion-sidebar-child,
+.as-single-chapter-lesson-quiz-sidebar-accordion {
     background-color: #8AAAE5;
     color: #ffffff;
-    /* cursor: pointer; */
     max-width: 98%;
     padding: 18px;
     font-size: 18px;
@@ -233,10 +234,10 @@ body {
     display: none;
 }
 
-.as-sildebar-chapter-list .as-topic-accordion-sidebar-grandchild {
+.as-sildebar-chapter-list .as-topic-accordion-sidebar-grandchild,
+.as-topic-chapter-sidebar-accordion-quiz {
     background-color: #666666;
     color: #ffffff;
-    /* cursor: pointer; */
     max-width: 96%;
     padding: 18px;
     font-size: 18px;
@@ -244,10 +245,10 @@ body {
     display: none;
 }
 
-.as-sildebar-chapter-list .as-section-accordion-sidebar-grand-grandchild {
+.as-sildebar-chapter-list .as-section-accordion-sidebar-grand-grandchild,
+.as-section-quiz-sidebar-accordion {
     background-color: #8AAAE5;
     color: #ffffff;
-    /* cursor: pointer; */
     max-width: 94%;
     padding: 18px;
     font-size: 18px;
@@ -290,7 +291,8 @@ body {
 .as-single-lesson-accordion,
 .as-topic-single-page-accordion,
 .as-section-single-page-accordion,
-.as-single-chapter-page-label {
+.as-single-chapter-page-label,
+.as-chapter-quiz-accordion {
     background-color: #8AAAE5;
     color: #ffffff;
     cursor: default;
@@ -305,7 +307,10 @@ body {
 
 .as-chapter-accordion-list .as-lesson-accordion-child,
 .as-single-topic-accordion,
-.as-section-topic-single-page-accordion {
+.as-section-topic-single-page-accordion,
+.as-section-quiz-accordion,
+.as-topic-lesson-single-page-accordion-quiz,
+.as-single-chapter-lesson-quiz-accordion {
     background-color: #666666 !important;
     color: #ffffff;
     cursor: pointer;
@@ -315,7 +320,9 @@ body {
 }
 
 .as-chapter-accordion-list .as-topic-accordion-grandchild,
-.as-single-section-accordion {
+.as-single-section-accordion,
+.as-single-lesson-section-accordion,
+.as-topic-chapter-single-page-accordion-quiz {
     background-color: #8AAAE5 !important;
     color: #ffffff;
     cursor: pointer;
@@ -325,7 +332,8 @@ body {
     margin: 5px 0px 0px 56px;
 }
 
-.as-chapter-accordion-list .as-section-accordion-grand-grandchild {
+.as-chapter-accordion-list .as-section-accordion-grand-grandchild,
+.as-single-chapter-section-quiz-accordion {
     background-color: #666666 !important;
     color: #ffffff;
     cursor: pointer;
@@ -337,7 +345,8 @@ body {
 
 /* accordion css single page */
 
-.as-single-topic-accordion {
+.as-single-topic-accordion,
+.as-topic-lesson-single-page-accordion-quiz {
     margin: 5px 0px 0px 28px !important
 }
 
@@ -375,7 +384,9 @@ body {
 .as-single-topic-pre-butt,
 .as-single-topic-next-butt,
 .as-single-section-pre-butt,
-.as-single-section-next-butt {
+.as-single-section-next-butt,
+.as-clts-quiz-next-butt,
+.as-clts-quiz-previous-butt {
     background: #8AAAE5;
     padding: 10px 14px;
     color: white;

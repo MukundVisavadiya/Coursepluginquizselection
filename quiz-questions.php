@@ -367,6 +367,7 @@ add_action('save_post', 'as_save_quiz_questions_meta');
 // quiz submit data ajax response
 function as_handle_quiz_submission()
 {
+
     if (!isset($_POST['quiz_data'], $_POST['quiz_id'])) {
         wp_send_json_error(['message' => 'Invalid data received.']);
     }
@@ -377,6 +378,7 @@ function as_handle_quiz_submission()
 
     // Store User Selected Data in database
     global $wpdb;
+
     $table_name = $wpdb->prefix . 'as_quiz_user_scores';
 
     $quiz_id = isset($_POST['quiz_id']) ? intval($_POST['quiz_id']) : 0;
@@ -436,7 +438,6 @@ function as_handle_quiz_submission()
 
     // Retrieve correct answers and points from post meta
     $questions_and_points = get_post_meta($quiz_id, 'as_quiz_questions_and_points', true);
-
     foreach ($quiz_data as $question) {
         $question_id = intval($question['question_id']);
         $selected_answers = $question['selected_answers'];
@@ -504,13 +505,13 @@ function as_handle_quiz_submission()
 
     // Calculate percentage score
     $percentage_score = ($total_points > 0) ? ($score / $total_points) * 100 : 0;
+    $percentage = substr($percentage_score, 0, 5);
 
     wp_send_json_success([
-        'message' => "You Percentage: $percentage_score%",
+        'message' => "You Percentage:  $percentage%",
         'score' => $score,
         'total_points' => $total_points,
         'feedback' => $feedback,
-        'url' => site_url() . '/quiz/' . $quiz_slug . '/'
     ]);
 }
 

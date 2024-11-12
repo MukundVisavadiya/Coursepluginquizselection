@@ -41,7 +41,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                 $chapter_meta_slug = get_post_field('post_name', $chapter_sidebar_id);
                 $course_slug = get_post_field('post_name', $course_id);
             ?>
-                <div class="as-sidebar-chapter-accordion-parent as-sidebar-chapter-parent-<?php echo $chapter_sidebar_id; ?>" data-chapter-id="<?php echo  $chapter_sidebar_id  ?>">
+                <div class="as-sidebar-chapter-accordion-parent  as-sidebar-chapter-parent-<?php echo $chapter_sidebar_id; ?>" data-chapter-id="<?php echo  $chapter_sidebar_id  ?>">
                     <?php
                     if (get_post_status($chapter_sidebar_id) === 'future') {
 
@@ -71,8 +71,26 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                             ?>
                             <i class="fa-solid fa-angle-down" style="cursor:pointer"></i>
                         </div>
+
                     <?php } ?>
+
                 </div>
+                <!-- Chapter Quiz -->
+                <?php if (!empty($course_data['quiz_id'])) {
+                    foreach ($course_data['quiz_id'] as $quiz_chapter_id) {
+                        $quiz_chapter_meta_slug = get_post_field('post_name', $quiz_chapter_id);
+                ?>
+                        <div class="as-sidebar-chapter-quiz-accordion as-sidebar-chapter-parent-<?php echo $chapter_sidebar_id; ?>">
+                            <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug   . '/quiz/' .  $quiz_chapter_meta_slug . '/' ?>">
+                                <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                <?php
+                                echo '<p>' . get_the_title($quiz_chapter_id) . '</p>';
+                                ?>
+                            </a>
+                        </div>
+                <?php
+                    }
+                } ?>
                 <?php
                 foreach ($lesson_sidebar_dataes as $lesson_data) {
                     $topic_sidebar_dataes = $lesson_data['topics'];
@@ -109,6 +127,22 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                         </div>
                     <?php  }
                     ?>
+                    <!-- Lesson Quiz -->
+                    <?php if (!empty($lesson_data['quiz_id'])) {
+                        foreach ($lesson_data['quiz_id'] as $quiz_lesson_id) {
+                            $quiz_lesson_meta_slug = get_post_field('post_name', $quiz_lesson_id);
+                    ?>
+                            <div class="as-single-chapter-lesson-quiz-sidebar-accordion as-lesson-accordion-sidebar-child-<?php echo $chapter_sidebar_id; ?>">
+                                <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
+                                    <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                    <?php
+                                    echo '<p>' . get_the_title($quiz_lesson_id) . '</p>';
+                                    ?>
+                                </a>
+                            </div>
+                    <?php
+                        }
+                    } ?>
 
                     <?php
                     foreach ($topic_sidebar_dataes as $topic_data) {
@@ -143,6 +177,26 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                     </div>
                                 </div>
                             </div>
+                            <!-- Topic Quiz -->
+                            <?php
+
+                            if (!empty($topic_data['quiz_id'])) {
+                                foreach ($topic_data['quiz_id'] as $quiz_topic_id) {
+                                    $quiz_topic_meta_slug = get_post_field('post_name', $quiz_topic_id);
+                            ?>
+                                    <div class="as-topic-chapter-sidebar-accordion-quiz as-topic-accordion-sidebar-grandchild-<?php echo $lesson_sidebar_id; ?>" data-topic-id="<?php echo $topic_id ?>">
+                                        <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
+                                            <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                            <?php
+                                            echo '<p>' . get_the_title($quiz_topic_id) . '</p>';
+                                            ?>
+                                        </a>
+                                    </div>
+                            <?php
+                                }
+                            } ?>
+
+
                             <?php }
 
                         foreach ($section_sidebar_dataes as $section_data) {
@@ -169,6 +223,22 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                         </div>
                                     </a>
                                 </div>
+                                <!-- Section Quiz -->
+                                <?php if (!empty($section_data['quiz_id'])) {
+                                    foreach ($section_data['quiz_id'] as $quiz_id) {
+                                        $quiz_meta_slug = get_post_field('post_name', $quiz_id);
+                                ?>
+                                        <div class="as-section-quiz-sidebar-accordion as-section-accordion-sidebar-grand-grandchild-<?php echo $topic_sidebar_id; ?>">
+                                            <a style="display: flex; flex-direction: row; align-items: center;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/sections/' . $section_meta_slug . '/quiz/' . $quiz_meta_slug . '/' ?>">
+                                                <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>
+                                                <?php
+                                                echo '<p>' . get_the_title($quiz_id) . '</p>';
+                                                ?>
+                                            </a>
+                                        </div>
+                                <?php
+                                    }
+                                } ?>
                         <?php }
                         } ?>
                     <?php } ?>

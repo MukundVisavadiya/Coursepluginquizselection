@@ -7,16 +7,40 @@ if (have_posts()) :
         $quiz_id = get_the_ID();
         $quiz_dataes = get_post_meta($quiz_id, 'as_quiz_questions_and_points', true);
         $user_ID = get_current_user_id();
+        $current_url = home_url(add_query_arg(array(), $wp->request));
+        $parsed_url = parse_url($current_url);
+        $path_array = explode('/', trim($parsed_url['path'], characters: '/'));
+        $navigation_data = get_section_navigation_urls($path_array);
+        extract($navigation_data);
+        $completedSteps = $wpdb->get_results($wpdb->prepare(
+            "SELECT chapter_id, lesson_id, topic_id, section_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
+            $user_ID,
+            $course_id
+        ), ARRAY_A);
+
+        $progress_data = as_calculate_course_progress($course_id, $user_ID);
 ?>
+        <input type="hidden" class="as-next-section-quiz-url" value="<?php echo $next_section_url; ?>" />
+        <input type="hidden" class="as-previous-section-quiz-url" value="<?php echo $previous_section_url; ?>" />
         <input type="hidden" class="as_quiz_id" value="<?php echo $quiz_id ?>" />
         <input type="hidden" class="as_quiz_user_id" value="<?php echo $user_ID  ?>" />
-        <div class="as-course-container-fluid">
-            <div class="as-course-container">
-                <h1><?php echo esc_html($quiz_title); ?></h1>
+        <input type="hidden" class="as-course-id" value="<?php echo $course_id; ?>">
+        <input type="hidden" class="as-section-id" value="<?php echo $chapter_id; ?>">
+        <input type="hidden" class="as-chapter-id" value="<?php echo $topic_id; ?>">
+        <input type="hidden" class="as-lesson-id" value="<?php echo $lesson_id; ?>">
+        <input type="hidden" class="as-topic-id" value="<?php echo $section_id; ?>">
+
+        <div class="as-course-container">
+            <!-- This progress add total steps & completed steps -->
+            <div class="as-course-progressbar">
+                <p><?php echo $progress_data['progress']; ?>% Completed <?php echo $progress_data['completed_steps']; ?>/<?php echo $progress_data['total_steps']; ?> Steps</p>
+                <div class="as-progress-bar">
+                    <div class="as-progress-bar-fill" style="width: <?php echo $progress_data['progress']; ?>%;"></div>
+                </div>
             </div>
         </div>
-
         <div class="as-quiz-container">
+            <h4><?php echo esc_html($quiz_title); ?></h4>
             <?php
             $quiz_completion_time = get_post_meta(get_the_ID(), 'as_quiz_completion_time', true);
             if (!empty($quiz_completion_time)) {
@@ -84,7 +108,8 @@ if (have_posts()) :
                                     </div>
                                 <?php } else { ?>
                                     <div class="as-finish-button-wrapper">
-                                        <button id="finish-quiz" class="as-finish-quiz-button" disabled>Finish Quiz</button>
+                                        <button id="finish-quiz" class="as-finish-quiz-button" data-quiz-url="<?php echo $current_url ?>" disabled>Finish Quiz</button>
+                                        <input type="hidden" class="as-quiz-id" value="<?php echo $quiz_id ?>" />
                                     </div>
                                 <?php } ?>
                             </div>
