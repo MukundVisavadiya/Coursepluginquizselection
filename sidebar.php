@@ -64,7 +64,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                         </a>
                         <div>
                             <?php
-                            $isChapterCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, 0, 0, 0);
+                            $isChapterCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, 0, 0, 0, 0);
                             if ($isChapterCompleted) {
                                 echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                             }
@@ -116,7 +116,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                 </a>
                                 <div>
                                     <?php
-                                    $isLessonCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, 0, 0);
+                                    $isLessonCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, 0, 0, 0);
                                     if ($isLessonCompleted) {
                                         echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                     }
@@ -168,7 +168,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                     </a>
                                     <div>
                                         <?php
-                                        $isTopicCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, $topic_sidebar_id, 0);
+                                        $isTopicCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, $topic_sidebar_id, 0, 0);
                                         if ($isTopicCompleted) {
                                             echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                         }
@@ -215,7 +215,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                         <div>
                                             <?php
                                             echo '<p>' . get_the_title($section_sidebar_id) . '</p>';
-                                            $isSectionCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, $topic_sidebar_id, $section_sidebar_id);
+                                            $isSectionCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, $topic_sidebar_id, $section_sidebar_id, 0);
                                             if ($isSectionCompleted) {
                                                 echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                             }

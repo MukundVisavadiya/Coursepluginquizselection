@@ -22,6 +22,7 @@ function get_section_navigation_urls($path_array)
     }
     $course_id = $course->ID;
     $course_slug = $course->post_name;
+  
     $course_dataes = get_post_meta($course_id, 'course_data', true);
 
     foreach ($course_dataes as $chapter_index => $course_data) {

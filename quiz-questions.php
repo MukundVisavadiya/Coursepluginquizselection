@@ -507,6 +507,18 @@ function as_handle_quiz_submission()
     $percentage_score = ($total_points > 0) ? ($score / $total_points) * 100 : 0;
     $percentage = substr($percentage_score, 0, 5);
 
+    $data = array(
+        'message' => "Your Percentage: $percentage%",
+        'score' => $score,
+        'total_points' => $total_points,
+        'feedback' => $feedback,
+        'time_taken' => $time_taken
+    );
+
+    $json_data = json_encode($data);
+
+    update_post_meta($quiz_id, 'user_quiz_score_data', $json_data);
+
     wp_send_json_success([
         'message' => "You Percentage:  $percentage%",
         'score' => $score,

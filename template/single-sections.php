@@ -4,7 +4,7 @@ get_header();
 /**
  * Course Sidebar
  */
-require_once dirname(__FILE__)  . '/../sidebar.php';
+// require_once dirname(__FILE__)  . '/../sidebar.php';
 
 $current_url = home_url(add_query_arg(array(), $wp->request));
 
@@ -13,6 +13,7 @@ $parsed_url = parse_url($current_url);
 $path_array = explode('/', trim($parsed_url['path'], characters: '/'));
 $course = get_page_by_path($path_array[2], OBJECT, 'course');
 $course_id = $course->ID;
+$course_slug = $course->post_name;
 $course_dataes = get_post_meta($course_id, 'course_data', true);
 
 $show_previous = false;
@@ -28,14 +29,12 @@ global $wpdb;
 
 $table_name = $wpdb->prefix . 'as_learnmore_user_activity';
 $completedSteps = $wpdb->get_results($wpdb->prepare(
-    "SELECT chapter_id, lesson_id, topic_id, section_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
+    "SELECT chapter_id, lesson_id, topic_id, section_id, quiz_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
     $user_id,
     $course_id
 ), ARRAY_A);
 
 $progress_data = as_calculate_course_progress($course_id, $user_id);
-
-
 ?>
 
 <main class="as-dashboard">

@@ -68,7 +68,7 @@ while (have_posts()) {
                             <a href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/' ?>">
                                 <?php
                                 echo '<p>' . get_the_title($chapter_id) . '</p>';
-                                $isChapterCompleted = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0);
+                                $isChapterCompleted = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0, 0);
                                 ?>
                             </a>
                             <div>
@@ -122,7 +122,7 @@ while (have_posts()) {
                                     <a href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/' ?>">
                                         <?php
                                         echo '<p>' . get_the_title($lesson_id) . '</p>';
-                                        $isLessonCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0);
+                                        $isLessonCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, 0);
                                         ?>
                                     </a>
                                     <div>
@@ -177,7 +177,7 @@ while (have_posts()) {
                                         <a href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/' ?>">
                                             <?php
                                             echo '<p>' . get_the_title($topic_id) . '</p>';
-                                            $isTopicCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0);
+                                            $isTopicCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, 0);
                                             ?>
                                         </a>
                                         <div>
@@ -223,7 +223,7 @@ while (have_posts()) {
                                         <a href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $section_meta_slug . '/' ?>">
                                             <?php
                                             echo '<p>' . get_the_title($section_id) . '</p>';
-                                            $isSectionCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id);
+                                            $isSectionCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id, 0);
                                             if ($isSectionCompleted) {
                                                 echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                             }

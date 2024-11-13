@@ -562,6 +562,7 @@ jQuery(document).ready(function () {
               jQuery('.as-quiz-results').append(totalScoreHtml);
 
               jQuery('.as-review-answers').on('click', function () {
+                console.log("this is clickbale");
                 jQuery('.as-quiz-feedback-results-wrapper').toggle();
               });
 

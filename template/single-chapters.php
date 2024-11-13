@@ -23,7 +23,7 @@ global $wpdb;
 
 $table_name = $wpdb->prefix . 'as_learnmore_user_activity';
 $completedSteps = $wpdb->get_results($wpdb->prepare(
-    "SELECT chapter_id, lesson_id, topic_id, section_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
+    "SELECT chapter_id, lesson_id, topic_id, section_id, quiz_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
     $user_id,
     $course_id
 ), ARRAY_A);
@@ -299,7 +299,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             }
                         }
                     }
-                    $isChapterCompleted = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0);
+                    $isChapterCompleted = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0, 0);
 
                     ?>
 
@@ -355,7 +355,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 <?php } ?>
                                 <div>
                                     <?php
-                                    $isLessonCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0);
+                                    $isLessonCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, 0);
                                     if ($isLessonCompleted) {
                                         echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                     }
@@ -404,7 +404,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                     <?php } ?>
                                     <div>
                                         <?php
-                                        $isTopicCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0);
+                                        $isTopicCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, 0);
                                         if ($isTopicCompleted) {
                                             echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                         }
@@ -444,7 +444,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                         <a href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/sections/' . $section_meta_slug . '/' ?>">
                                             <?php
                                             echo '<p>' . get_the_title($section_id) .  '</p>';
-                                            $isSectionCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id);
+                                            $isSectionCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id, 0);
                                             if ($isSectionCompleted) {
                                                 echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                             }
