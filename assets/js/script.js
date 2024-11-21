@@ -541,7 +541,9 @@ jQuery(document).ready(function () {
               var quiz_url = jQuery('#finish-quiz').data("quiz-url");
               var nextSectionUrl = jQuery('.as-next-section-quiz-url').val() || '';
               var previousSectonUrl = jQuery('.as-previous-section-quiz-url').val() || '';
-              console.log(nextSectionUrl);
+              var nextparenttopicUrl = jQuery('.as-next-topic-url').val() || '';
+              var showNext = jQuery('.as-show-next').val() || '';
+              console.log(showNext);
 
               jQuery('.as-quiz-results').empty();
 
@@ -557,8 +559,14 @@ jQuery(document).ready(function () {
                     <a class="as-review-answers">See Correct/Wrong</a>
                     <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
                     <a class="as-clts-quiz-next-butt" href="${nextSectionUrl}">Next &raquo; </a>
+                    ${showNext === 0 ?
+                  `<div class="as-current-section-outside-topic">
+                        <a href="${nextparenttopicUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Topic</a>
+                      </div>`: ''
+                }
                   </div>
-                </div>`;
+                
+                </div> `;
               jQuery('.as-quiz-results').append(totalScoreHtml);
 
               jQuery('.as-review-answers').on('click', function () {
@@ -570,7 +578,7 @@ jQuery(document).ready(function () {
 
               response.data.feedback.forEach(function (feedback) {
                 const questionFeedback = `
-                      <div class="as-question-feedback">
+              < div class="as-question-feedback" >
                           <h4>${feedback.question}</h4>
                           <ul>
                               ${feedback.correct_answers.map(function (correctAnswer) {
@@ -583,8 +591,8 @@ jQuery(document).ready(function () {
                           </ul>
                            <p>Points: ${feedback.points}</p>
                           <p>Result: ${feedback.is_correct ? '<span style="color: green;">Correct</span>' : '<span style="color: red;">Incorrect</span>'}</p>
-                      </div>
-                  `;
+                      </ >
+              `;
                 jQuery('.as-quiz-feedback-results-wrapper').append(questionFeedback);
               });
             } else {
@@ -650,6 +658,10 @@ jQuery(document).ready(function () {
     });
 
   });
+
+  jQuery('#as-view-result').on('click', function () {
+    jQuery('.as-quiz-feedback-results-wrapper').toggle();
+  })
 });
 
 

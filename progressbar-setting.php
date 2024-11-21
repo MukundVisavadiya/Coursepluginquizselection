@@ -78,9 +78,7 @@ function as_calculate_course_progress($course_id, $user_id = null)
                             $total_steps++;
                             if (as_is_step_completed($completedSteps, $course_data['chapter_id'], $lesson_data['lesson_id'], $topic_data['topic_id'], $section_data['section_id'], $quiz_id)) {
                                 $completed_steps++;
-                            } else {
-                                $data = "Rong data is coming";
-                            }
+                            } 
                         }
                     }
                 }
@@ -91,7 +89,6 @@ function as_calculate_course_progress($course_id, $user_id = null)
     $progress = ($total_steps > 0) ? ($completed_steps / $total_steps) * 100 : 0;
 
     return [
-        '$data' => $data,
         'progress' => round($progress),
         'total_steps' => $total_steps,
         'completed_steps' => $completed_steps

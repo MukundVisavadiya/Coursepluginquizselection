@@ -22,7 +22,7 @@ function get_section_navigation_urls($path_array)
     }
     $course_id = $course->ID;
     $course_slug = $course->post_name;
-  
+
     $course_dataes = get_post_meta($course_id, 'course_data', true);
 
     foreach ($course_dataes as $chapter_index => $course_data) {
@@ -50,23 +50,11 @@ function get_section_navigation_urls($path_array)
                         foreach ($quiz_ids as $quiz_index => $quiz_id) {
 
                             if ($section_index > 0 || $quiz_index > 0 || $section_dataes[0] || $section_data['quiz_id'][0]) {
-                                $previous_section_id = $section_dataes[0]['section_id'];
-                                $previous_section_slug = get_post_field('post_name', $previous_section_id);
-                                $previous_section_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $previous_section_slug . '/';
-                                $show_previous = true;
-                            } elseif ($quiz_index > 0) {
-                                $previous_quiz_id = $quiz_ids[$quiz_index - 1];
-                                $previous_quiz_slug = get_post_field('post_name', $previous_quiz_id);
-                                $previous_section_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $section_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
-                            } else {
-                                $previous_section_id = $section_dataes[$section_index - 1]['section_id'];
-                                $previous_section_slug = get_post_field('post_name', $previous_section_id);
-                                if (!empty($section_dataes[$section_index - 1]['quiz_id'])) {
-                                    $last_quiz_id = end($section_dataes[$section_index - 1]['quiz_id']);
-                                    $previous_quiz_slug = get_post_field('post_name', $last_quiz_id);
-                                    $previous_section_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $previous_section_slug . '/quiz/' . $previous_quiz_slug . '/';
-                                } else {
+                                if (in_array($quiz_id, $section_data['quiz_id'])) {
+                                    $sectionId = $section_data['section_id'];
+                                    $previous_section_slug = get_post_field('post_name', $sectionId);
                                     $previous_section_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $previous_section_slug . '/';
+                                    $show_previous = true;
                                 }
                             }
 
@@ -76,7 +64,7 @@ function get_section_navigation_urls($path_array)
                                     $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
                                     $next_section_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $section_meta_slug . '/quiz/' . $next_quiz_slug . '/';
                                     $show_next = true;
-                                } else {
+                                } else if (isset($section_dataes[$section_index + 1]['section_id'])) {
                                     $next_section_id = $section_dataes[$section_index + 1]['section_id'];
                                     $next_section_slug = get_post_field('post_name', $next_section_id);
                                     $next_section_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $next_section_slug . '/';

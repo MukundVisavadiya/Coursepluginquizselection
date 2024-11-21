@@ -4,7 +4,7 @@ get_header();
 /**
  * Course Sidebar
  */
-require_once dirname(__FILE__)  . '/../sidebar.php';
+// require_once dirname(__FILE__)  . '/../sidebar.php';
 
 if (have_posts()) :
     while (have_posts()) : the_post();
@@ -17,6 +17,9 @@ if (have_posts()) :
         $path_array = explode('/', trim($parsed_url['path'], characters: '/'));
         $navigation_data = get_section_navigation_urls($path_array);
         extract($navigation_data);
+        global $wpdb;
+
+        $table_name = $wpdb->prefix . 'as_learnmore_user_activity';
         $completedSteps = $wpdb->get_results($wpdb->prepare(
             "SELECT chapter_id, lesson_id, topic_id, section_id, quiz_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
             $user_ID,
@@ -34,17 +37,21 @@ if (have_posts()) :
         <input type="hidden" class="as-chapter-id" value="<?php echo $chapter_id; ?>">
         <input type="hidden" class="as-lesson-id" value="<?php echo $lesson_id; ?>">
         <input type="hidden" class="as-topic-id" value="<?php echo $topic_id; ?>">
-        <?php
-        if (!as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id, $quiz_id)) { ?>
-            <div class="as-course-container">
-                <!-- This progress add total steps & completed steps -->
-                <div class="as-course-progressbar">
-                    <p><?php echo $progress_data['progress']; ?>% Completed <?php echo $progress_data['completed_steps']; ?>/<?php echo $progress_data['total_steps']; ?> Steps</p>
-                    <div class="as-progress-bar">
-                        <div class="as-progress-bar-fill" style="width: <?php echo $progress_data['progress']; ?>%;"></div>
-                    </div>
+        <input type="hidden" class="as-show-next" value="<?php echo $show_next; ?>">
+        <input type="hidden" class="as-next-topic-url" value="<?php echo  $current_section_outside_topic_url ?>">
+        <div class="as-course-container">
+            <!-- This progress add total steps & completed steps -->
+            <div class="as-course-progressbar">
+                <p><?php echo $progress_data['progress']; ?>% Completed <?php echo $progress_data['completed_steps']; ?>/<?php echo $progress_data['total_steps']; ?> Steps</p>
+                <div class="as-progress-bar">
+                    <div class="as-progress-bar-fill" style="width: <?php echo $progress_data['progress']; ?>%;"></div>
                 </div>
             </div>
+        </div>
+        <?php
+
+        if (!as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id, $quiz_id)) { ?>
+
             <div class="as-quiz-container">
                 <h4><?php echo esc_html($quiz_title); ?></h4>
                 <?php
@@ -151,9 +158,7 @@ if (have_posts()) :
         } else {
             $quiz_data_json = get_post_meta($quiz_id, 'user_quiz_score_data', true);
             $quiz_data = json_decode($quiz_data_json, true);
-            // echo "<pre>";
-            // print_r($quiz_data);
-            // echo "</pre>";
+            $feedbackes = $quiz_data['feedback'];
         ?>
             <div class="as-quiz-container">
                 <h4><?php echo esc_html($quiz_title); ?></h4>
@@ -168,13 +173,42 @@ if (have_posts()) :
                         <div class="as-review-answers-wrapper">
                             <a class="as-clts-quiz-previous-butt" href="<?php echo $previous_section_url; ?>">&laquo; Previous</a>
                             <a class="as-review-answers" id="as-view-result">See Correct/Wrong</a>
-                            <a class="as-restart-quizz" href="<?php echo $current_url; ?>">Restart Quize</a>
-                            <a class="as-clts-quiz-next-butt" href="<?php echo $next_section_url; ?>">Next &raquo; </a>
+                            <?php if ($show_next == 1) { ?>
+                                <a class="as-clts-quiz-next-butt" href="<?php echo $next_section_url; ?>">Next &raquo; </a>
+                            <?php } else { ?>
+                                <a href="<?php echo $current_section_outside_topic_url;
+                                            ?>" class="as-current-section-outside-topic-btn">Proceed to Next Topic</a>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
                 <div class="as-quiz-feedback-results-wrapper">
-
+                    <div class="as-question-feedback">
+                        <?php foreach ($feedbackes as $feedback) { ?>
+                            <h4 style="padding:10px 0px;"><?php echo $feedback['question'] ?></h4>
+                            <ul>
+                                <?php foreach ($feedback['correct_answers'] as $correct_ans) { ?>
+                                    <li class="correct-answer" style="color: green; border: 1px solid;padding: 10px;margin-bottom: 10px;"><b>Correct Answer:</b><?php echo $correct_ans ?></li>
+                                <?php } ?>
+                                <?php foreach ($feedback['selected_answers'] as $selected_ans) {
+                                    $isCorrect = $feedback['is_correct'];
+                                    $class = $isCorrect ? 'correct-answer' : 'wrong-answer';
+                                    $color = $isCorrect ? 'green' : 'red';
+                                ?>
+                                    <li class="<?php echo $class; ?>" style="color: <?php echo $color; ?>; border: 1px solid;padding: 10px;margin-bottom: 10px;"><b>Your Answer:</b><?php echo $selected_ans ?></li>
+                                <?php } ?>
+                            </ul>
+                            <p>Points: <?php echo !empty($feedback['points']) ? $feedback['points'] : 0;
+                                        ?></p>
+                            <p>Result:
+                                <?php if ($feedback['is_correct']) { ?>
+                                    <span style="color: green;">Correct</span>
+                                <?php } else { ?>
+                                    <span style="color: red;">Incorrect</span>
+                                <?php } ?>
+                            </p>
+                        <?php } ?>
+                    </div>
                 </div>
             </div>
         <?php
