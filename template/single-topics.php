@@ -29,9 +29,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
 ), ARRAY_A);
 
 $progress_data = as_calculate_course_progress($course_id, $user_id);
-echo "<pre>";
-print_r($progress_data['testing']);
-echo "</pre>";
+
 ?>
 
 <main class="as-dashboard">

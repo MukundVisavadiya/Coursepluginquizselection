@@ -539,15 +539,21 @@ jQuery(document).ready(function () {
 
             if (response.success === true) {
               var quiz_url = jQuery('#finish-quiz').data("quiz-url");
-              var nextSectionUrl = jQuery('.as-next-section-quiz-url').val() || '';
-              var previousSectonUrl = jQuery('.as-previous-section-quiz-url').val() || '';
-              var nextparenttopicUrl = jQuery('.as-next-topic-url').val() || '';
-              var showNext = jQuery('.as-show-next').val() || '';
-              console.log(showNext);
+              var current_path_parts = quiz_url.split('/').filter(function (part) {
+                return part !== "";
+              });
+              var section_path_slug = jQuery('.as-section-path-slug').val() || '';
+              var topic_path_slug = jQuery(".as-topic-path-slug").val() || '';
 
-              jQuery('.as-quiz-results').empty();
+              if (current_path_parts[11] == section_path_slug) {
+                var nextSectionUrl = jQuery('.as-next-section-quiz-url').val() || '';
+                var previousSectonUrl = jQuery('.as-previous-section-quiz-url').val() || '';
+                var nextparenttopicUrl = jQuery('.as-next-topic-url').val() || '';
+                var showNext = jQuery('.as-show-next').val() || '';
 
-              const totalScoreHtml = `<div class="as-score-summary">
+                jQuery('.as-quiz-results').empty();
+
+                const totalScoreHtml = `<div class="as-score-summary">
                 <h3>Results: </h3>
                 <p>Your time: ${formattedTime}</p>
                   <div class="as-persantage-wrapper">
@@ -566,12 +572,47 @@ jQuery(document).ready(function () {
                   </div>
                 
                 </div> `;
-              jQuery('.as-quiz-results').append(totalScoreHtml);
+                jQuery('.as-quiz-results').append(totalScoreHtml);
 
-              jQuery('.as-review-answers').on('click', function () {
-                console.log("this is clickbale");
-                jQuery('.as-quiz-feedback-results-wrapper').toggle();
-              });
+                jQuery('.as-review-answers').on('click', function () {
+                  jQuery('.as-quiz-feedback-results-wrapper').toggle();
+                });
+              }
+
+
+              if (current_path_parts[9] == topic_path_slug) {
+                var nextTopicUrl = jQuery('.as-next-topic-quiz-url').val() || '';
+                var previousTopicUrl = jQuery('.as-previous-topic-quiz-url').val() || '';
+                var nextparentlessonUrl = jQuery('.as-next-lesson-url').val() || '';
+                var showNext = jQuery('.as-show-topic-next').val() || '';
+
+                jQuery('.as-quiz-results').empty();
+
+                const totalScoreHtml = `<div class="as-score-summary">
+                <h3>Results: </h3>
+                <p>Your time: ${formattedTime}</p>
+                  <div class="as-persantage-wrapper">
+                    <p>You have obtained <b>${response.data.score}</b> out of <b>${response.data.total_points}</b> marks</p>
+                    <p> ${response.data.message}</p>
+                  </div>
+                  <div class="as-review-answers-wrapper">
+                    <a class="as-clts-quiz-previous-butt" href="${previousTopicUrl}">&laquo; Previous</a>
+                    <a class="as-review-answers">See Correct/Wrong</a>
+                    <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
+                    ${showNext == 1 ? `<a class="as-clts-quiz-next-butt" href="${nextTopicUrl}">Next &raquo;</a>` : `
+                      <div class="as-current-section-outside-topic" style="margin-top: 20px;">
+                        <a href="${nextparentlessonUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Lesson</a>
+                      </div>
+                    `} 
+                  </div>
+                
+                </div> `;
+                jQuery('.as-quiz-results').append(totalScoreHtml);
+
+                jQuery('.as-review-answers').on('click', function () {
+                  jQuery('.as-quiz-feedback-results-wrapper').toggle();
+                });
+              }
 
               // Append detailed feedback for each question
 
@@ -646,6 +687,42 @@ jQuery(document).ready(function () {
         lesson_id: lessonId,
         topic_id: topicId,
         section_id: sectionId,
+        quiz_id: quizId,
+      },
+      success: function (response) {
+        console.log(response.data.success);
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX call error:", status, error);
+      }
+    });
+
+  });
+
+  jQuery('#as-view-result').on('click', function () {
+    jQuery('.as-quiz-feedback-results-wrapper').toggle();
+  })
+});
+
+// topic quiz completed manage
+jQuery(document).ready(function () {
+  var courseId = jQuery('.as-topic-course-id').val();
+  var chapterId = jQuery(".as-topic-chapter-id").val();
+  var lessonId = jQuery(".as-topic-lesson-id").val();
+  var topicId = jQuery(".as-topic-topic-id").val();
+  var quizId = jQuery(".as_quiz_id").val();
+
+  jQuery('.as-finish-quiz-button-topic').on('click', function () {
+    jQuery.ajax({
+      url: as_quiz_ajax_progress_topic.ajaxurl,
+      type: "POST",
+      data: {
+        action: "as_quiz_ajax_progress_topic",
+        nonce: as_quiz_ajax_progress_topic.nonce,
+        course_id: courseId,
+        chapter_id: chapterId,
+        lesson_id: lessonId,
+        topic_id: topicId,
         quiz_id: quizId,
       },
       success: function (response) {

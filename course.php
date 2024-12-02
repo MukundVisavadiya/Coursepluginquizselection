@@ -68,6 +68,9 @@ function as_enqueue_course_styles_script()
     wp_localize_script("as-course-plugin-script", "quiz_ajax_object_data", $course_enroll);
     // quiz Progress for section localization
     wp_localize_script("as-course-plugin-script", "as_quiz_ajax_progress_section", $course_enroll);
+    // quiz Progress for topic localization
+    wp_localize_script("as-course-plugin-script", "as_quiz_ajax_progress_topic", $course_enroll);
+
     // wp_localize_script("as-course-plugin-script", "quiz_ajax_section_progress", $course_enroll);
     wp_enqueue_style('as-datatable', plugin_dir_url(__FILE__) . 'assets/css/datatable.css');
     wp_enqueue_style('as-course-plugin-style', plugin_dir_url(__FILE__) . 'assets/css/style.css');
