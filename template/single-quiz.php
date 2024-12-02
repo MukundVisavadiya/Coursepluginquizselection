@@ -50,7 +50,32 @@ if (have_posts()) :
         </div>
         <?php
 
-        if (!as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id, $quiz_id)) { ?>
+        if (!as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $section_id, $quiz_id)) {
+            $previousSectionCompleted = false;
+
+            $previous_section = $previous_section_url;
+            $parsed_section = parse_url($previous_section);
+            $section_path_array = explode('/', trim($parsed_section['path'], characters: '/'));
+            $previous_section_slug = $section_path_array[10];
+            $previous_section_array = get_page_by_path($previous_section_slug, OBJECT, 'sections');
+            $previous_section_id = $previous_section_array->ID;
+
+            $previos_section_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $previous_section_id, 0);
+            if ($previos_section_completed) {
+                $previousSectionCompleted = true;
+            }
+
+            if (!$previousSectionCompleted) {
+                echo '<div class="as-quiz-error-message as-alert-error-message">';
+                echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous section.</p>';
+                echo '</div>';
+                echo '<style>
+                        .as-quiz-container {
+                            display: none;
+                        }
+                    </style>';
+            }
+        ?>
 
             <div class="as-quiz-container">
                 <h4><?php echo esc_html($quiz_title); ?></h4>

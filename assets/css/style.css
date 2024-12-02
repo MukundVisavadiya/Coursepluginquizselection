@@ -807,7 +807,8 @@ h2.as-single-course-title {
 }
 
 /* .................... Single Quiz Page CSS ...........................*/
-.as-quiz-container {
+.as-quiz-container,
+.as-quiz-error-message {
     max-width: 992px;
     margin: 100px auto;
     padding: 20px;

@@ -24,6 +24,8 @@ $next_section_url = '#';
 $current_section_outside_topic_url = "#";
 
 $user_id = get_current_user_id();
+$navigation_data = get_section_navigation_urls($path_array);
+extract($navigation_data);
 
 global $wpdb;
 
@@ -123,7 +125,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
 
                             // Fetch completed sections
                             $completedSections = $wpdb->get_results($wpdb->prepare(
-                                "SELECT chapter_id, lesson_id, topic_id, section_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
+                                "SELECT chapter_id, lesson_id, topic_id, section_id, quiz_id FROM $table_name WHERE user_id = %d AND course_id = %d AND activity_status = 'completed'",
                                 $user_id,
                                 $course_id
                             ), ARRAY_A);
@@ -154,9 +156,19 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                     $isCurrentSectionCompleted = true;
                                 }
 
+                                $previous_section = $previous_section_url;
+                                $parsed_section = parse_url($previous_section);
+                                $section_path_array = explode('/', trim($parsed_section['path'], characters: '/'));
+                                $previous_section_quiz_slug = $section_path_array[12];
+                                $previous_section_quiz_array = get_page_by_path($previous_section_quiz_slug, OBJECT, 'quiz');
+                                $previous_section_quiz_id = $previous_section_quiz_array->ID;
+
+                                $previos_quiz_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, $previous_section_id, $previous_section_quiz_id);
+
                                 $previous_section_id_condition = isset($previous_section_id) ? $previous_section_id : '';
+
                                 // Check if the previous section is completed
-                                if ($section['section_id'] == $previous_section_id_condition && !empty($isCompleted)) {
+                                if ($section['section_id'] == $previous_section_id_condition && $previos_quiz_completed  && !empty($isCompleted)) {
                                     $previousSectionCompleted = true;
                                 }
                             }
@@ -294,7 +306,6 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 </style>';
                                     }
                                 } elseif ($chapter_index > 0 && !$allPreviousChapterSectionsCompleted) {
-
                                     echo '<div class="as-alert-error-message">';
                                     echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous sections in the chapter.</p>';
                                     echo '</div>';
@@ -316,7 +327,6 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                     }
                                 </style>';
                                 } elseif ($lesson_index > 0 && !$allPreviousLessonsSectionsCompleted) {
-
                                     echo '<div class="as-alert-error-message">';
                                     echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous sections in the lesson.</p>';
                                     echo '</div>';

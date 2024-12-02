@@ -558,12 +558,11 @@ jQuery(document).ready(function () {
                     <a class="as-clts-quiz-previous-butt" href="${previousSectonUrl}">&laquo; Previous</a>
                     <a class="as-review-answers">See Correct/Wrong</a>
                     <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
-                    <a class="as-clts-quiz-next-butt" href="${nextSectionUrl}">Next &raquo; </a>
-                    ${showNext === 0 ?
-                  `<div class="as-current-section-outside-topic">
+                    ${showNext == 1 ? `<a class="as-clts-quiz-next-butt" href="${nextSectionUrl}">Next &raquo;</a>` : `
+                      <div class="as-current-section-outside-topic" style="margin-top: 20px;">
                         <a href="${nextparenttopicUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Topic</a>
-                      </div>`: ''
-                }
+                      </div>
+                    `} 
                   </div>
                 
                 </div> `;
