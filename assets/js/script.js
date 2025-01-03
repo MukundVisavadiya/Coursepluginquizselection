@@ -544,6 +544,7 @@ jQuery(document).ready(function () {
               });
               var section_path_slug = jQuery('.as-section-path-slug').val() || '';
               var topic_path_slug = jQuery(".as-topic-path-slug").val() || '';
+              console.log(topic_path_slug);
 
               if (current_path_parts[11] == section_path_slug) {
                 var nextSectionUrl = jQuery('.as-next-section-quiz-url').val() || '';
@@ -580,39 +581,7 @@ jQuery(document).ready(function () {
               }
 
 
-              if (current_path_parts[9] == topic_path_slug) {
-                var nextTopicUrl = jQuery('.as-next-topic-quiz-url').val() || '';
-                var previousTopicUrl = jQuery('.as-previous-topic-quiz-url').val() || '';
-                var nextparentlessonUrl = jQuery('.as-next-lesson-url').val() || '';
-                var showNext = jQuery('.as-show-topic-next').val() || '';
 
-                jQuery('.as-quiz-results').empty();
-
-                const totalScoreHtml = `<div class="as-score-summary">
-                <h3>Results: </h3>
-                <p>Your time: ${formattedTime}</p>
-                  <div class="as-persantage-wrapper">
-                    <p>You have obtained <b>${response.data.score}</b> out of <b>${response.data.total_points}</b> marks</p>
-                    <p> ${response.data.message}</p>
-                  </div>
-                  <div class="as-review-answers-wrapper">
-                    <a class="as-clts-quiz-previous-butt" href="${previousTopicUrl}">&laquo; Previous</a>
-                    <a class="as-review-answers">See Correct/Wrong</a>
-                    <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
-                    ${showNext == 1 ? `<a class="as-clts-quiz-next-butt" href="${nextTopicUrl}">Next &raquo;</a>` : `
-                      <div class="as-current-section-outside-topic" style="margin-top: 20px;">
-                        <a href="${nextparentlessonUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Lesson</a>
-                      </div>
-                    `} 
-                  </div>
-                
-                </div> `;
-                jQuery('.as-quiz-results').append(totalScoreHtml);
-
-                jQuery('.as-review-answers').on('click', function () {
-                  jQuery('.as-quiz-feedback-results-wrapper').toggle();
-                });
-              }
 
               // Append detailed feedback for each question
 
