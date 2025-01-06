@@ -60,21 +60,48 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                     $section_dataes = $topic_data['sections'];
                     $topic_id = $topic_data['topic_id'];
                     $topic_meta_slug = get_post_field('post_name', $topic_id);
+                    $topic_quiz_ids = $topic_data['quiz_id'] ?? [];
 
                     if ($topic_meta_slug == $path_array[8]) {
 
-                        if ($topic_index > 0) {
-                            $previous_topic_id = $topic_dataes[$topic_index - 1]['topic_id'];
-                            $previous_topic_slug = get_post_field('post_name',  $previous_topic_id);
-                            $previous_topic_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $previous_topic_slug . '/';
-                            $show_previous = true;
-                        }
+                        foreach ($topic_quiz_ids as $quiz_index => $quiz_id) {
 
-                        if ($topic_index < count($topic_dataes) - 1) {
-                            $next_topic_id = $topic_dataes[$topic_index + 1]['topic_id'];
-                            $next_topic_slug = get_post_field('post_name', $next_topic_id);
-                            $next_topic_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $next_topic_slug . '/';
-                            $show_next = true;
+                            if ($topic_index > 0 || $quiz_index > 0) {
+                                if ($quiz_index > 0) {
+                                    $previous_quiz_id = $quiz_ids[$quiz_index - 1];
+                                    $previous_quiz_slug = get_post_field('post_name', $previous_quiz_id);
+                                    $previous_topic_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
+                                } else {
+                                    $previous_topic_id = $topic_dataes[$topic_index - 1]['topic_id'];
+                                    $previous_topic_slug = get_post_field('post_name', $previous_topic_id);
+                                    if (!empty($topic_dataes[$topic_index - 1]['quiz_id'])) {
+                                        $last_quiz_id = end($topic_dataes[$topic_index - 1]['quiz_id']);
+                                        $previous_quiz_slug = get_post_field('post_name', $last_quiz_id);
+                                        $previous_topic_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
+                                    } else {
+                                        $previous_topic_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/';
+                                    }
+                                }
+                                $show_previous = true;
+                            }
+
+                            if ($topic_index < count($topic_dataes) - 1 || $quiz_index < count($topic_quiz_ids) - 1 || !empty($topic_data['quiz_id'])) {
+                                if ($topic_data['quiz_id'][0]) {
+                                    $first_quiz_slug = get_post_field('post_name', $quiz_id);
+                                    $next_topic_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/quiz/' . $first_quiz_slug . '/';
+                                    $show_next = true;
+                                } else if (isset($topic_dataes['quiz_id'][$quiz_index + 1])) {
+                                    $next_quiz_id = $topic_dataes['quiz_id'][$quiz_index + 1];
+                                    $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
+                                    $next_topic_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $next_quiz_slug . '/';
+                                    $show_next = true;
+                                } else {
+                                    $next_topic_id = $topic_dataes[$topic_index + 1]['topic_id'];
+                                    $next_topic_slug = get_post_field('post_name', $next_topic_id);
+                                    $next_topic_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/';
+                                    $show_next = true;
+                                }
+                            }
                         }
 
                         $current_topic_outside_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug  . '/';
@@ -221,6 +248,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                         </div>
 
                         <div class="as-chapter-accordion-list">
+
                             <?php
                             if ($chapter_index == 0 && $lesson_index == 0 && $topic_index == 0) {
                                 if (!$allSectionsCompleted) {
@@ -402,7 +430,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 foreach ($topic_data['quiz_id'] as $quiz_topic_id) {
                                     $quiz_topic_meta_slug = get_post_field('post_name', $quiz_topic_id);
                             ?>
-                                    <div class="as-topic-single-page-accordion">
+                                    <div class="as-topic-single-page-accordion-topic-quiz">
                                         <a style="display: flex; justify-content: space-between;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug . '/topics/' .  $topic_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
                                             <div style="display: flex; align-items: center;">
                                                 <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>

@@ -1231,27 +1231,57 @@ function as_mark_complete_topic()
 
     $allTopics = json_decode(stripslashes($_POST['all_topics']), true);
 
-    // Determine next section URL
-    $next_topic_url = '#'; // default value
+    // Determine next topic url
+    $next_topic_url = '#';
+    $first_quiz_url = '#';
+    $next_quiz_url = '#';
+
     foreach ($allTopics as $index => $topic) {
-        if ($topic['topic_id'] == $topic_id && isset($allTopics[$index + 1])) {
-            $next_topic = $allTopics[$index + 1];
-            $next_topic_slug = get_post_field('post_name', $next_topic['topic_id']);
-            $next_topic_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' . $next_topic_slug . '/';
+
+        if ($topic['topic_id'] == $topic_id) {
+
+            if (!empty($topic['quiz_id'])) {
+                $topic_slug = get_post_field('post_name', $topic['topic_id']);
+
+                foreach ($topic['quiz_id'] as $quiz_index => $quiz_id) {
+                    $quiz_slug = get_post_field('post_name', $quiz_id);
+
+                    if ($quiz_index == 0) {
+                        $first_quiz_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' . $topic_slug . '/quiz/' . $quiz_slug . '/';
+                    }
+
+                    if (isset($topic['quiz_id'][$quiz_index + 1])) {
+                        $next_quiz_id = $topic['quiz_id'][$quiz_index + 1];
+                        $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
+                        $next_quiz_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' . $topic_slug  . '/quiz/' . $next_quiz_slug . '/';
+                        break;
+                    }
+                }
+            }
+
+            if ($next_quiz_url === '#' && isset($allTopics[$index + 1])) {
+                $next_topic = $allTopics[$index + 1];
+                $next_topic_slug = get_post_field('post_name', $next_topic['topic_id']);
+                $next_topic_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' .  $next_topic_slug . '/';
+            }
+
             break;
         }
     }
 
-    if ($next_topic_url !== '#') {
+    if ($next_topic_url !== '#' || $first_quiz_url !== '#' || $next_quiz_url !== '#') {
         wp_send_json_success(array(
-            'next_topic_url' => $next_topic_url
+            'next_topic_url' => $next_topic_url,
+            'first_quiz_url' => $first_quiz_url,
+            'next_quiz_url' => $next_quiz_url
         ));
     } else {
         $fallback_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/';
         wp_send_json_error(array(
-            'next_topic_url' => $fallback_url
+            'next_lesson_url' => $fallback_url
         ));
     }
+
 
     wp_die();
 }
