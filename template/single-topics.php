@@ -93,7 +93,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 } else if (isset($topic_dataes['quiz_id'][$quiz_index + 1])) {
                                     $next_quiz_id = $topic_dataes['quiz_id'][$quiz_index + 1];
                                     $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
-                                    $next_topic_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/sections/' . $next_quiz_slug . '/';
+                                    $next_topic_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/topics/' . $topic_meta_slug . '/quiz/' . $next_quiz_slug . '/';
                                     $show_next = true;
                                 } else {
                                     $next_topic_id = $topic_dataes[$topic_index + 1]['topic_id'];

@@ -378,6 +378,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                         <!-- Lesson Quiz -->
                         <?php if (!empty($lesson_data['quiz_id'])) {
                             foreach ($lesson_data['quiz_id'] as $quiz_lesson_id) {
+
                                 $quiz_lesson_meta_slug = get_post_field('post_name', $quiz_lesson_id);
                         ?>
                                 <div class="as-single-chapter-lesson-quiz-accordion">
@@ -390,7 +391,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                         </div>
                                         <div>
                                             <?php
-                                            $isLessonQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, $quiz_id);
+                                            $isLessonQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, $quiz_lesson_id);
                                             if ($isLessonQuizCompleted) {
                                                 echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                             }
@@ -449,7 +450,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                             </div>
                                             <div>
                                                 <?php
-                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_id);
+                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_topic_id);
                                                 if ($isTopicQuizCompleted) {
                                                     echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                                 }

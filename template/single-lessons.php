@@ -53,21 +53,48 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                 $topic_dataes = $lesson_data['topics'];
                 $lesson_id = $lesson_data['lesson_id'];
                 $lesson_meta_slug = get_post_field('post_name', $lesson_id);
+                $lesson_quiz_ids = $lesson_data['quiz_id'] ?? [];
 
                 if ($lesson_meta_slug == $path_array[6]) {
 
-                    if ($lesson_index > 0) {
-                        $previous_lesson_id = $lesson_dataes[$lesson_index - 1]['lesson_id'];
-                        $previous_lesson_slug = get_post_field('post_name', $previous_lesson_id);
-                        $previous_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $previous_lesson_slug . '/';
-                        $show_previous = true;
-                    }
+                    foreach ($lesson_quiz_ids as $quiz_index => $quiz_id) {
 
-                    if ($lesson_index < count($lesson_dataes) - 1) {
-                        $next_lesson_id = $lesson_dataes[$lesson_index + 1]['lesson_id'];
-                        $next_lesson_slug = get_post_field('post_name', $next_lesson_id);
-                        $next_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $next_lesson_slug . '/';
-                        $show_next = true;
+                        if ($lesson_index > 0 || $quiz_index > 0) {
+                            if ($quiz_index > 0) {
+                                $previous_quiz_id = $quiz_ids[$quiz_index - 1];
+                                $previous_quiz_slug = get_post_field('post_name', $previous_quiz_id);
+                                $previous_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
+                            } else {
+                                $previous_lesson_id = $lesson_dataes[$lesson_index - 1]['lesson_id'];
+                                $previous_lesson_slug = get_post_field('post_name', $previous_lesson_id);
+                                if (!empty($lesson_dataes[$lesson_index - 1]['quiz_id'])) {
+                                    $last_quiz_id = end($lesson_dataes[$lesson_index - 1]['quiz_id']);
+                                    $previous_quiz_slug = get_post_field('post_name', $last_quiz_id);
+                                    $previous_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
+                                } else {
+                                    $previous_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/';
+                                }
+                            }
+                            $show_previous = true;
+                        }
+
+                        if ($lesson_index < count($lesson_dataes) - 1 || $quiz_index < count($lesson_quiz_ids) - 1 || !empty($lesson_data['quiz_id'])) {
+                            if ($lesson_data['quiz_id'][0]) {
+                                $first_quiz_slug = get_post_field('post_name', $quiz_id);
+                                $next_lesson_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/quiz/' . $first_quiz_slug . '/';
+                                $show_next = true;
+                            } else if (isset($lesson_dataes['quiz_id'][$quiz_index + 1])) {
+                                $next_quiz_id = $lesson_dataes['quiz_id'][$quiz_index + 1];
+                                $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
+                                $next_lesson_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/quiz/' . $next_quiz_slug . '/';
+                                $show_next = true;
+                            } else {
+                                $next_lesson_id = $lesson_dataes[$lesson_index + 1]['lesson_id'];
+                                $next_lesson_slug = get_post_field('post_name', $next_lesson_id);
+                                $next_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/';
+                                $show_next = true;
+                            }
+                        }
                     }
 
                     $current_lesson_outside_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/';
@@ -400,7 +427,8 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                             </div>
                                             <div>
                                                 <?php
-                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_id);
+                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_topic_id);
+
                                                 if ($isTopicQuizCompleted) {
                                                     echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                                 }

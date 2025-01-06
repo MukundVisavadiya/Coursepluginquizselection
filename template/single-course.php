@@ -98,7 +98,7 @@ while (have_posts()) {
                                     </div>
                                     <div>
                                         <?php
-                                        $isChapterQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0, $quiz_id);
+                                        $isChapterQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0, $quiz_chapter_id);
                                         if ($isChapterQuizCompleted) {
                                             echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                         }
@@ -164,7 +164,7 @@ while (have_posts()) {
                                         </div>
                                         <div>
                                             <?php
-                                            $isLessonQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, $quiz_id);
+                                            $isLessonQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, $quiz_lesson_id);
                                             if ($isLessonQuizCompleted) {
                                                 echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                             }
@@ -228,7 +228,7 @@ while (have_posts()) {
                                             </div>
                                             <div>
                                                 <?php
-                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_id);
+                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_topic_id);
                                                 if ($isTopicQuizCompleted) {
                                                     echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                                 }

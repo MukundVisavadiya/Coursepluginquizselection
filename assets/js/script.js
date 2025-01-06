@@ -360,12 +360,16 @@ jQuery(document).ready(function () {
       },
       success: function (response) {
         if (response.success) {
-          if (response.data.next_lesson_url) {
+          if (response.data.first_quiz_url !== "#") {
+            window.location.href = response.data.first_quiz_url;
+          } else if (response.data.next_lesson_url !== "#") {
             window.location.href = response.data.next_lesson_url;
+          } else if (response.data.next_quiz_url !== "#") {
+            window.location.href = response.data.next_quiz_url;
           }
         } else {
-          if (response.data && response.data.next_lesson_url) {
-            window.location.href = response.data.next_lesson_url;
+          if (response.data && response.data.next_chapter_url) {
+            window.location.href = response.data.next_chapter_url;
           } else {
             console.log("No next section or fallback URL available.");
           }
@@ -577,7 +581,8 @@ jQuery(document).ready(function () {
               var section_path_slug =
                 jQuery(".as-section-path-slug").val() || "";
               var topic_path_slug = jQuery(".as-topic-path-slug").val() || "";
-              console.log(topic_path_slug);
+              var lesson_path_slug = jQuery(".as-lesson-path-slug").val() || "";
+              console.log(lesson_path_slug);
 
               if (current_path_parts[11] == section_path_slug) {
                 var nextSectionUrl =
@@ -621,9 +626,8 @@ jQuery(document).ready(function () {
                   jQuery(".as-quiz-feedback-results-wrapper").toggle();
                 });
               }
-
               // this result for topic quiz
-              if (current_path_parts[9] == topic_path_slug) {
+              else if (current_path_parts[9] == topic_path_slug) {
                 var nextTopicUrl =
                   jQuery(".as-next-topic-quiz-url").val() || "";
                 var previousTopicUrl =
@@ -655,6 +659,51 @@ jQuery(document).ready(function () {
                                     : `
                                   <div class="as-current-section-outside-topic" style="margin-top: 20px;">
                                     <a href="${nextparentlessonUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Lesson</a>
+                                  </div>
+                                `
+                                } 
+                              </div>
+            
+                            </div> `;
+                jQuery(".as-quiz-results").append(totalScoreHtml);
+
+                jQuery(".as-review-answers").on("click", function () {
+                  jQuery(".as-quiz-feedback-results-wrapper").toggle();
+                });
+              }
+              // this result for lesson quiz
+              else if (current_path_parts[7] == lesson_path_slug) {
+                var nextLessonUrl =
+                  jQuery(".as-next-lesson-quiz-url").val() || "";
+                var previousLessonUrl =
+                  jQuery(".as-previous-lesson-quiz-url").val() || "";
+                var nextparentchapterurl =
+                  jQuery(".as-next-chapter-url").val() || "";
+                var showNext = jQuery(".as-show-lesson-next").val() || "";
+
+                jQuery(".as-quiz-results").empty();
+
+                const totalScoreHtml = `<div class="as-score-summary">
+                            <h3>Results: </h3>
+                            <p>Your time: ${formattedTime}</p>
+                              <div class="as-persantage-wrapper">
+                                <p>You have obtained <b>${
+                                  response.data.score
+                                }</b> out of <b>${
+                  response.data.total_points
+                }</b> marks</p>
+                                <p> ${response.data.message}</p>
+                              </div>
+                              <div class="as-review-answers-wrapper">
+                                <a class="as-clts-quiz-previous-butt" href="${previousLessonUrl}">&laquo; Previous</a>
+                                <a class="as-review-answers">See Correct/Wrong</a>
+                                <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
+                                ${
+                                  showNext == 1
+                                    ? `<a class="as-clts-quiz-next-butt" href="${nextLessonUrl}">Next &raquo;</a>`
+                                    : `
+                                  <div class="as-current-section-outside-topic" style="margin-top: 20px;">
+                                    <a href="${nextparentchapterurl}" class="as-current-section-outside-topic-btn">Proceed to Next Chapter</a>
                                   </div>
                                 `
                                 } 
@@ -794,6 +843,39 @@ jQuery(document).ready(function () {
         chapter_id: chapterId,
         lesson_id: lessonId,
         topic_id: topicId,
+        quiz_id: quizId,
+      },
+      success: function (response) {
+        console.log(response.data.success);
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX call error:", status, error);
+      },
+    });
+  });
+
+  jQuery("#as-view-result").on("click", function () {
+    jQuery(".as-quiz-feedback-results-wrapper").toggle();
+  });
+});
+
+// lesson quiz complete manage
+jQuery(document).ready(function () {
+  var courseId = jQuery(".as-lesson-course-id").val();
+  var chapterId = jQuery(".as-lesson-chapter-id").val();
+  var lessonId = jQuery(".as-lesson-lesson-id").val();
+  var quizId = jQuery(".as_quiz_id").val();
+
+  jQuery(".as-finish-quiz-button-lesson").on("click", function () {
+    jQuery.ajax({
+      url: as_quiz_ajax_progress_lesson.ajaxurl,
+      type: "POST",
+      data: {
+        action: "as_quiz_ajax_progress_lesson",
+        nonce: as_quiz_ajax_progress_lesson.nonce,
+        course_id: courseId,
+        chapter_id: chapterId,
+        lesson_id: lessonId,
         quiz_id: quizId,
       },
       success: function (response) {
