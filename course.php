@@ -72,6 +72,8 @@ function as_enqueue_course_styles_script()
     wp_localize_script("as-course-plugin-script", "as_quiz_ajax_progress_topic", $course_enroll);
     // quiz Progress for lesson localization
     wp_localize_script("as-course-plugin-script", "as_quiz_ajax_progress_lesson", $course_enroll);
+    // quiz Progress for chapter localization
+    wp_localize_script("as-course-plugin-script", "as_quiz_ajax_progress_chapter", $course_enroll);
 
     // wp_localize_script("as-course-plugin-script", "quiz_ajax_section_progress", $course_enroll);
     wp_enqueue_style('as-datatable', plugin_dir_url(__FILE__) . 'assets/css/datatable.css');
@@ -1385,6 +1387,7 @@ function as_mark_complete_chapter()
     $lesson_id = '';
     $topic_id = '';
     $section_id = '';
+    $quiz_id = 0;
     $course_id = intval($_POST['course_id']);
     $current_time = current_time('mysql');
 
@@ -1393,12 +1396,13 @@ function as_mark_complete_chapter()
 
     // Update or insert activity
     $activity = $wpdb->get_row($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND lesson_id = %d AND topic_id = %d AND section_id = %d AND course_id = %d",
+        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND lesson_id = %d AND topic_id = %d AND section_id = %d AND quiz_id = %d AND course_id = %d",
         $user_id,
         $chapter_id,
         $lesson_id,
         $topic_id,
         $section_id,
+        $quiz_id,
         $course_id
     ));
 
@@ -1416,6 +1420,7 @@ function as_mark_complete_chapter()
                 'lesson_id' => $lesson_id,
                 'topic_id' => $topic_id,
                 'section_id' => $section_id,
+                'quiz_id' => $quiz_id,
                 'course_id' => $course_id,
             )
         );
@@ -1429,6 +1434,7 @@ function as_mark_complete_chapter()
                 'topic_id' => $topic_id,
                 'section_id' => $section_id,
                 'course_id' => $course_id,
+                'quiz_id' => $quiz_id,
                 'activity_type' => 'chapter',
                 'activity_status' => 'completed',
                 'activity_started' => $current_time,

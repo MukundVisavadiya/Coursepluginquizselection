@@ -16,6 +16,8 @@ $next_chapter_url = '#';
 $current_chapter_outside_course_url = '#';
 $show_previous = false;
 $show_next = false;
+$isCurrentChapterCompleted = false;
+$currentChapterQuizCompleted = false;
 
 $user_id = get_current_user_id();
 
@@ -48,21 +50,59 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
             $lesson_dataes = $course_data['lessons'];
             $chapter_id = $course_data['chapter_id'];
             $chapter_meta_slug = get_post_field('post_name', $chapter_id);
+            $chapter_quiz_ids = $course_data['quiz_id'] ?? [];
 
             if ($chapter_meta_slug == $path_array[4]) {
 
-                if ($chapter_index > 0) {
-                    $previous_chapter_id = $course_dataes[$chapter_index - 1]['chapter_id'];
-                    $previous_chapter_slug = get_post_field('post_name', $previous_chapter_id);
-                    $previous_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $previous_chapter_slug . '/';
-                    $show_previous = true;
-                }
+                foreach ($chapter_quiz_ids as $quiz_index => $quiz_id) {
 
-                if ($chapter_index < count($course_dataes) - 1) {
-                    $next_chapter_id = $course_dataes[$chapter_index + 1]['chapter_id'];
-                    $next_chapter_slug = get_post_field('post_name', $next_chapter_id);
-                    $next_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $next_chapter_slug . '/';
-                    $show_next = true;
+                    if ($chapter_index > 0 || $quiz_index > 0) {
+                        if ($quiz_index > 0) {
+                            $previous_quiz_id = $quiz_ids[$quiz_index - 1];
+                            $previous_quiz_slug = get_post_field('post_name', $previous_quiz_id);
+                            $previous_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
+                        } else {
+                            $previous_chapter_id = $course_dataes[$chapter_index - 1]['chapter_id'];
+                            $previous_chapter_slug = get_post_field('post_name', $previous_chapter_id);
+                            if (!empty($course_dataes[$chapter_index - 1]['quiz_id'])) {
+                                $last_quiz_id = end($course_dataes[$chapter_index - 1]['quiz_id']);
+                                $previous_quiz_slug = get_post_field('post_name', $last_quiz_id);
+                                $previous_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/quiz/' . $previous_quiz_slug . '/';
+                            } else {
+                                $previous_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/';
+                            }
+                        }
+                        $show_previous = true;
+                    }
+
+                    if ($lesson_index < count($course_dataes) - 1 || $quiz_index < count($chapter_quiz_ids) - 1 || !empty($course_data['quiz_id'])) {
+                        if ($course_data['quiz_id'][0]) {
+                            $first_quiz_slug = get_post_field('post_name', $quiz_id);
+                            $next_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/quiz/' . $first_quiz_slug . '/';
+                            $show_next = true;
+                        } else if (isset($course_dataes['quiz_id'][$quiz_index + 1])) {
+                            $next_quiz_id = $course_dataes['quiz_id'][$quiz_index + 1];
+                            $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
+                            $next_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/quiz/' . $next_quiz_slug . '/';
+                            $show_next = true;
+                        } else {
+                            $next_chapter_id = $course_dataes[$chapter_index + 1]['chapter_id'];
+                            $next_chapter_slug = get_post_field('post_name', $next_chapter_id);
+                            $next_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/';
+                            $show_next = true;
+                        }
+                    }
+
+                    // current lesson quiz completed or not
+                    $current_chapter_quiz_completed = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0, $quiz_id);
+                    if ($current_chapter_quiz_completed) {
+                        $currentChapterQuizCompleted = true;
+                    }
+                    // current topic compeleted or not
+                    $current_chapter_completed = as_is_step_completed($completedSteps, $chapter_id, 0, 0, 0, 0);
+                    if ($current_chapter_completed) {
+                        $isCurrentChapterCompleted = true;
+                    }
                 }
                 $current_chapter_outside_course_url = get_site_url() . '/course/' . $course_slug . '/';
 
@@ -103,7 +143,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                     $course_id
                 ), ARRAY_A);
 
-                $isCurrentChapterCompleted = false;
+
                 $previousChapterCompleted = false;
                 $allPreviousChaptersCompleted = true;
 
@@ -177,35 +217,48 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 echo '<p class="as-course-info-message"><i class="fa-solid fa-circle-exclamation"></i> Please Complete the All Lesson After You Go Next Chapter.</p>';
                                 echo '</div>';
                                 echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: none;
-                    }
+                                        .as-mark-complete-chapter-btn {
+                                            display: none;
+                                        }
 
-                    .as-single-chapter-next-butt {
-                        display: none;
-                    }
-                </style>';
+                                        .as-single-chapter-next-butt {
+                                            display: none;
+                                        }
+                                     </style>';
                             } else {
-                                if ($isCurrentChapterCompleted) {
+                                if (!$currentChapterQuizCompleted) {
+                                    echo '<div class="as-alert-error-message">';
+                                    echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please complete current Chapter quiz.</p>';
+                                    echo '</div>';
                                     echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: none;
-                    }
+                                            .as-mark-complete-chapter-btn {
+                                                display: none;
+                                            }
+                
+                                            .as-single-chapter-next-butt {
+                                                display: block;
+                                            }
+                                        </style>';
+                                } else if (!$isCurrentChapterCompleted) {
+                                    echo '<style>
+                                            .as-mark-complete-chapter-btn {
+                                                display: block;
+                                            }
 
-                    .as-single-chapter-next-butt {
-                        display: block;
-                    }
-                </style>';
+                                            .as-single-chapter-next-butt {
+                                                display: none;
+                                            }
+                                          </style>';
                                 } else {
                                     echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: block;
-                    }
+                                            .as-mark-complete-chapter-btn {
+                                                display: none;
+                                            }
 
-                    .as-single-chapter-next-butt {
-                        display: none;
-                    }
-                </style>';
+                                            .as-single-chapter-next-butt {
+                                                display: block;
+                                            }
+                                        </style>';
                                 }
                             }
                         } elseif ($chapter_index > 0 && !$allPreviousChaptersCompleted) {
@@ -213,88 +266,101 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous chapters.</p>';
                             echo '</div>';
                             echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: none;
-                    }
+                                    .as-mark-complete-chapter-btn {
+                                        display: none;
+                                    }
 
-                    .as-single-chapter-next-butt {
-                        display: none;
-                    }
+                                    .as-single-chapter-next-butt {
+                                        display: none;
+                                    }
 
-                    .as-single-chapter-page-label {
-                        display: none;
-                    }
+                                    .as-single-chapter-page-label {
+                                        display: none;
+                                    }
 
-                    .as-lesson-accordion-child {
-                        display: none;
-                    }
+                                    .as-lesson-accordion-child {
+                                        display: none;
+                                    }
 
-                    .as-chapter-content-wrapper{
-                        display:none;
-                    }
-                </style>';
+                                    .as-chapter-content-wrapper{
+                                        display:none;
+                                    }
+                                </style>';
                         } else {
                             if (!$allLessonCompleted && $previousChapterCompleted) {
                                 echo '<div class="as-alert-info-message">';
                                 echo '<p class="as-course-info-message"><i class="fa-solid fa-circle-exclamation"></i> Please Complete the All Lesson After You Go Next Chapter.</p>';
                                 echo '</div>';
                                 echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: none;
-                    }
+                                        .as-mark-complete-chapter-btn {
+                                            display: none;
+                                        }
 
-                    .as-single-chapter-next-butt {
-                        display: none;
-                    }
-                </style>';
+                                        .as-single-chapter-next-butt {
+                                            display: none;
+                                        }
+                                     </style>';
                             } else {
                                 if ($previousChapterCompleted || $chapter_index == 0) {
-                                    if ($isCurrentChapterCompleted) {
+                                    if (!$currentChapterQuizCompleted) {
+                                        echo '<div class="as-alert-error-message">';
+                                        echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please complete current Chapter quiz.</p>';
+                                        echo '</div>';
                                         echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: none;
-                    }
-
-                    .as-single-chapter-next-butt {
-                        display: block;
-                    }
-                </style>';
+                                        .as-mark-complete-chapter-btn {
+                                            display: none;
+                                        }
+            
+                                        .as-single-chapter-next-butt {
+                                            display: block;
+                                        }
+                                    </style>';
+                                    } else if (!$isCurrentChapterCompleted) {
+                                        echo '<style>
+                                                .as-mark-complete-chapter-btn {
+                                                    display: block;
+                                                }
+    
+                                                .as-single-chapter-next-butt {
+                                                    display: none;
+                                                }
+                                              </style>';
                                     } else {
                                         echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: block;
-                    }
-
-                    .as-single-chapter-next-butt {
-                        display: none;
-                    }
-                </style>';
+                                                .as-mark-complete-chapter-btn {
+                                                    display: none;
+                                                }
+    
+                                                .as-single-chapter-next-butt {
+                                                    display: block;
+                                                }
+                                            </style>';
                                     }
                                 } else {
                                     echo '<div class="as-alert-error-message">';
                                     echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous chapter.</p>';
                                     echo '</div>';
                                     echo '<style>
-                    .as-mark-complete-chapter-btn {
-                        display: none;
-                    }
+                                            .as-mark-complete-chapter-btn {
+                                                display: none;
+                                            }
 
-                    .as-single-chapter-next-butt {
-                        display: none;
-                    }
+                                            .as-single-chapter-next-butt {
+                                                display: none;
+                                            }
 
-                    .as-single-chapter-page-label {
-                        display: none;
-                    }
+                                            .as-single-chapter-page-label {
+                                                display: none;
+                                            }
 
-                    .as-lesson-accordion-child {
-                        display: none;
-                    }
+                                            .as-lesson-accordion-child {
+                                                display: none;
+                                            }
 
-                     .as-chapter-content-wrapper{
-                        display:none;
-                    }
-                </style>';
+                                            .as-chapter-content-wrapper{
+                                                display:none;
+                                            }
+                                        </style>';
                                 }
                             }
                         }

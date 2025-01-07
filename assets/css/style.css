@@ -311,8 +311,7 @@ body {
 .as-single-lesson-accordion,
 .as-topic-single-page-accordion,
 .as-section-single-page-accordion,
-.as-single-chapter-page-label,
-.as-chapter-quiz-accordion {
+.as-single-chapter-page-label {
   background-color: #8aaae5;
   color: #ffffff;
   cursor: default;
@@ -339,7 +338,9 @@ body {
   margin: 5px 0px 0px 28px;
 }
 
-.as-topic-single-page-accordion-topic-quiz {
+.as-topic-single-page-accordion-topic-quiz,
+.as-topic-single-page-accordion-lesson-quiz,
+.as-chapter-quiz-accordion {
   background-color: #8aaae5 !important;
   color: #ffffff;
   cursor: pointer;
@@ -617,7 +618,9 @@ h2.as-single-course-title {
 .as-topic-single-page-accordion i,
 .as-single-lesson-accordion i,
 .as-single-chapter-page-label i,
-.as-topic-single-page-accordion-topic-quiz i {
+.as-topic-single-page-accordion-topic-quiz i,
+.as-topic-single-page-accordion-lesson-quiz i,
+.as-chapter-quiz-accordion i {
   margin-right: 10px;
 }
 

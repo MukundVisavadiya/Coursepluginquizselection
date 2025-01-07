@@ -400,7 +400,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             foreach ($lesson_data['quiz_id'] as $quiz_lesson_id) {
                                 $quiz_lesson_meta_slug = get_post_field('post_name', $quiz_lesson_id);
                         ?>
-                                <div class="as-single-lesson-accordion">
+                                <div class="as-topic-single-page-accordion-lesson-quiz">
                                     <a style="display: flex; justify-content: space-between;" href="<?php echo get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/lessons/' . $lesson_meta_slug  . '/quiz/' . $quiz_topic_meta_slug . '/' ?>">
                                         <div style="display: flex; align-items: center;">
                                             <i style="padding-right:10px" class="fa-solid fa-circle-question"></i>

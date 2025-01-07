@@ -1,5 +1,73 @@
 <?php
 // This function use for topics quiz
+function get_chapter_navigation_urls($path_array)
+{
+    global $wp;
+
+    // Initialize variables
+    $show_chapter_previous = false;
+    $show_chapter_next = false;
+    $previous_chapter_url = '#';
+    $next_chapter_url = '#';
+    $current_chapter_outside_course_url = '#';
+    $chapter_course_id = '#';
+    $chapter_chapter_id = '#';
+
+    // Get course details from URL
+    $course = get_page_by_path($path_array[2], OBJECT, 'course');
+    if (!$course) {
+        return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id');
+    }
+    $chapter_course_id = $course->ID;
+    $course_slug = $course->post_name;
+
+    $course_dataes = get_post_meta($chapter_course_id, 'course_data', true);
+
+    foreach ($course_dataes as $chapter_index => $course_data) {
+        $lesson_dataes = $course_data['lessons'];
+        $chapter_chapter_id = $course_data['chapter_id'];
+        $chapter_meta_slug = get_post_field('post_name', $course_data['chapter_id']);
+
+
+        $quiz_ids = $course_data['quiz_id'] ?? [];
+
+        if ($chapter_meta_slug == $path_array[4]) {
+
+            foreach ($quiz_ids as $quiz_index => $quiz_id) {
+
+                if ($chapter_index > 0 || $quiz_index > 0 || $course_dataes[0] || $course_data['quiz_id'][0]) {
+                    if (in_array($quiz_id, $course_data['quiz_id'])) {
+                        $chapterId = $course_data['chapter_id'];
+                        $previous_chapter_slug = get_post_field('post_name', $chapterId);
+                        $previous_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $previous_chapter_slug . '/';
+                        $show_chapter_previous = true;
+                    }
+                }
+
+                if ($chapter_index < count($course_dataes) - 1 || $quiz_index < count($quiz_ids) - 1 || !empty($course_data['quiz_id'])) {
+                    if (isset($course_dataes['quiz_id'][$quiz_index + 1])) {
+                        $next_quiz_id = $course_dataes['quiz_id'][$quiz_index + 1];
+                        $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
+                        $next_chapter_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/quiz/' . $next_quiz_slug . '/';
+                        $show_chapter_next = true;
+                    } else if (isset($course_dataes[$chapter_index + 1]['chapter_id'])) {
+                        $next_chapter_id = $course_dataes[$chapter_index + 1]['chapter_id'];
+                        $next_chapter_slug = get_post_field('post_name', $next_chapter_id);
+                        $next_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug .  '/';
+                        $show_chapter_next = true;
+                    }
+                }
+            }
+
+            $current_chapter_outside_course_url  = get_site_url() . '/course/' . $course_slug . '/';
+
+            return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id');
+        }
+    }
+    // Default return if no matching section is found
+    return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id');
+}
+// This function use for topics quiz
 function get_lesson_navigation_urls($path_array)
 {
     global $wp;
@@ -438,7 +506,7 @@ function as_quiz_ajax_progress_lesson()
 
     // Update or insert activity
     $activity = $wpdb->get_row($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND lesson_id = %d AND topic_id = %d AND quiz_id = %d AND course_id = %d",
+        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND lesson_id = %d AND quiz_id = %d AND course_id = %d",
         $user_id,
         $chapter_id,
         $lesson_id,
@@ -493,3 +561,83 @@ function as_quiz_ajax_progress_lesson()
 }
 add_action('wp_ajax_as_quiz_ajax_progress_lesson', 'as_quiz_ajax_progress_lesson');
 add_action('wp_ajax_nopriv_as_quiz_ajax_progress_lesson', 'as_quiz_ajax_progress_lesson');
+
+// lesson quiz progress ajax call 
+function as_quiz_ajax_progress_chapter()
+{
+    if (!is_user_logged_in()) {
+        wp_send_json_error('User not logged in');
+    }
+
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'as-course-ajax-nonce')) {
+        wp_send_json_error(array('message' => 'Invalid nonce.'));
+        wp_die();
+    }
+
+    $user_id = get_current_user_id();
+    $chapter_id = intval($_POST['chapter_id']);
+    $course_id = intval($_POST['course_id']);
+    $quiz_id = intval($_POST['quiz_id']);
+
+
+    $current_time = current_time('mysql');
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'as_learnmore_user_activity';
+
+    // Update or insert activity
+    $activity = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND quiz_id = %d AND course_id = %d",
+        $user_id,
+        $chapter_id,
+        $course_id,
+        $quiz_id
+    ));
+
+    if ($activity) {
+        $wpdb->update(
+            $table_name,
+            array(
+                'activity_status' => 'completed',
+                'activity_completed' => $current_time,
+                'activity_updated' => $current_time,
+            ),
+            array(
+                'user_id' => $user_id,
+                'chapter_id' => $chapter_id,
+                'lesson_id' => 0,
+                'topic_id' => 0,
+                'section_id' => 0,
+                'course_id' => $course_id,
+                'quiz_id' => $quiz_id,
+            )
+        );
+    } else {
+        $wpdb->insert(
+            $table_name,
+            array(
+                'user_id' => $user_id,
+                'chapter_id' => $chapter_id,
+                'lesson_id' => 0,
+                'topic_id' => 0,
+                'section_id' => 0,
+                'quiz_id' => $quiz_id,
+                'course_id' => $course_id,
+                'activity_type' => 'chapters',
+                'activity_status' => 'completed',
+                'activity_started' => $current_time,
+                'activity_completed' => $current_time,
+                'activity_updated' => $current_time,
+            )
+        );
+    }
+
+
+    wp_send_json_success(array(
+        'success' => 'Quiz Completed',
+    ));
+
+    wp_die();
+}
+add_action('wp_ajax_as_quiz_ajax_progress_chapter', 'as_quiz_ajax_progress_chapter');
+add_action('wp_ajax_nopriv_as_quiz_ajax_progress_chapter', 'as_quiz_ajax_progress_chapter');

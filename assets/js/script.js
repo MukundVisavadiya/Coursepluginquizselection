@@ -573,7 +573,8 @@ jQuery(document).ready(function () {
                 jQuery(".as-section-path-slug").val() || "";
               var topic_path_slug = jQuery(".as-topic-path-slug").val() || "";
               var lesson_path_slug = jQuery(".as-lesson-path-slug").val() || "";
-              console.log(lesson_path_slug);
+              var chapter_path_slug =
+                jQuery(".as-chapter-path-slug").val() || "";
 
               if (current_path_parts[11] == section_path_slug) {
                 var nextSectionUrl =
@@ -703,12 +704,55 @@ jQuery(document).ready(function () {
                   jQuery(".as-quiz-feedback-results-wrapper").toggle();
                 });
               }
+              // this result for chapter quiz
+              else if (current_path_parts[5] == chapter_path_slug) {
+                var nextChapterUrl =
+                  jQuery(".as-next-chapter-quiz-url").val() || "";
+                var previousChapterUrl =
+                  jQuery(".as-previous-chapter-quiz-url").val() || "";
+                var showNext = jQuery(".as-show-chapter-next").val() || "";
+
+                jQuery(".as-quiz-results").empty();
+
+                const totalScoreHtml = `<div class="as-score-summary">
+                            <h3>Results: </h3>
+                            <p>Your time: ${formattedTime}</p>
+                              <div class="as-persantage-wrapper">
+                                <p>You have obtained <b>${
+                                  response.data.score
+                                }</b> out of <b>${
+                  response.data.total_points
+                }</b> marks</p>
+                                <p> ${response.data.message}</p>
+                              </div>
+                              <div class="as-review-answers-wrapper">
+                                <a class="as-clts-quiz-previous-butt" href="${previousChapterUrl}">&laquo; Previous</a>
+                                <a class="as-review-answers">See Correct/Wrong</a>
+                                <a class="as-restart-quizz" href="${quiz_url}">Restart Quize</a>
+                                ${
+                                  showNext == 1
+                                    ? `<a class="as-clts-quiz-next-butt" href="${nextChapterUrl}">Next &raquo;</a>`
+                                    : `
+                                  <div class="as-current-section-outside-topic" style="margin-top: 20px;">
+                                    <a href="${previousChapterUrl}" class="as-current-section-outside-topic-btn">Proceed to Previous Chapter</a>
+                                  </div>
+                                `
+                                } 
+                              </div>
+            
+                            </div> `;
+                jQuery(".as-quiz-results").append(totalScoreHtml);
+
+                jQuery(".as-review-answers").on("click", function () {
+                  jQuery(".as-quiz-feedback-results-wrapper").toggle();
+                });
+              }
 
               // Append detailed feedback for each question
 
               response.data.feedback.forEach(function (feedback) {
                 const questionFeedback = `
-              < div class="as-question-feedback" >
+              <div class="as-question-feedback">
                           <h4>${feedback.question}</h4>
                           <ul>
                               ${feedback.correct_answers
@@ -736,7 +780,7 @@ jQuery(document).ready(function () {
                               ? '<span style="color: green;">Correct</span>'
                               : '<span style="color: red;">Incorrect</span>'
                           }</p>
-                      </ >
+                      </div>
               `;
                 jQuery(".as-quiz-feedback-results-wrapper").append(
                   questionFeedback
@@ -863,6 +907,37 @@ jQuery(document).ready(function () {
         course_id: courseId,
         chapter_id: chapterId,
         lesson_id: lessonId,
+        quiz_id: quizId,
+      },
+      success: function (response) {
+        console.log(response.data.success);
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX call error:", status, error);
+      },
+    });
+  });
+
+  jQuery("#as-view-result").on("click", function () {
+    jQuery(".as-quiz-feedback-results-wrapper").toggle();
+  });
+});
+
+// chapter quiz complete manage
+jQuery(document).ready(function () {
+  var courseId = jQuery(".as-chapter-course-id").val();
+  var chapterId = jQuery(".as-chapter-chapter-id").val();
+  var quizId = jQuery(".as_quiz_id").val();
+
+  jQuery(".as-finish-quiz-button-chapter").on("click", function () {
+    jQuery.ajax({
+      url: as_quiz_ajax_progress_chapter.ajaxurl,
+      type: "POST",
+      data: {
+        action: "as_quiz_ajax_progress_chapter",
+        nonce: as_quiz_ajax_progress_chapter.nonce,
+        course_id: courseId,
+        chapter_id: chapterId,
         quiz_id: quizId,
       },
       success: function (response) {
