@@ -310,17 +310,12 @@ jQuery(document).ready(function () {
       },
       success: function (response) {
         if (response.success) {
-          console.log(response.data.first_quiz_url);
-          if (response.data.first_quiz_url !== "#") {
-            window.location.href = response.data.first_quiz_url;
-          } else if (response.data.next_topic_url !== "#") {
+          if (response.data.next_topic_url) {
             window.location.href = response.data.next_topic_url;
-          } else if (response.data.next_quiz_url !== "#") {
-            window.location.href = response.data.next_quiz_url;
           }
         } else {
-          if (response.data && response.data.next_lesson_url) {
-            window.location.href = response.data.next_lesson_url;
+          if (response.data && response.data.next_topic_url) {
+            window.location.href = response.data.next_topic_url;
           } else {
             console.log("No next section or fallback URL available.");
           }
@@ -632,8 +627,6 @@ jQuery(document).ready(function () {
                   jQuery(".as-next-topic-quiz-url").val() || "";
                 var previousTopicUrl =
                   jQuery(".as-previous-topic-quiz-url").val() || "";
-                var nextparentlessonUrl =
-                  jQuery(".as-next-lesson-url").val() || "";
                 var showNext = jQuery(".as-show-topic-next").val() || "";
 
                 jQuery(".as-quiz-results").empty();
@@ -658,7 +651,7 @@ jQuery(document).ready(function () {
                                     ? `<a class="as-clts-quiz-next-butt" href="${nextTopicUrl}">Next &raquo;</a>`
                                     : `
                                   <div class="as-current-section-outside-topic" style="margin-top: 20px;">
-                                    <a href="${nextparentlessonUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Lesson</a>
+                                    <a href="${previousTopicUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Lesson</a>
                                   </div>
                                 `
                                 } 

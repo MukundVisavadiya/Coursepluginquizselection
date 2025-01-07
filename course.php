@@ -1180,19 +1180,21 @@ function as_mark_complete_topic()
     $section_id = '';
     $course_id = intval($_POST['course_id']);
     $current_time = current_time('mysql');
+    $quiz_id = 0;
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'as_learnmore_user_activity';
 
     // Update or insert activity
     $activity = $wpdb->get_row($wpdb->prepare(
-        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND lesson_id = %d AND topic_id = %d AND section_id = %d AND course_id = %d",
+        "SELECT * FROM $table_name WHERE user_id = %d AND chapter_id = %d AND lesson_id = %d AND topic_id = %d AND section_id = %d AND course_id = %d AND quiz_id = %d",
         $user_id,
         $chapter_id,
         $lesson_id,
         $topic_id,
         $section_id,
-        $course_id
+        $course_id,
+        $quiz_id,
     ));
 
     if ($activity) {
@@ -1210,6 +1212,7 @@ function as_mark_complete_topic()
                 'topic_id' => $topic_id,
                 'section_id' => $section_id,
                 'course_id' => $course_id,
+                'quiz_id' => $quiz_id,
             )
         );
     } else {
@@ -1222,6 +1225,7 @@ function as_mark_complete_topic()
                 'topic_id' => $topic_id,
                 'section_id' => $section_id,
                 'course_id' => $course_id,
+                'quiz_id' => $quiz_id,
                 'activity_type' => 'Topic',
                 'activity_status' => 'completed',
                 'activity_started' => $current_time,
@@ -1233,57 +1237,27 @@ function as_mark_complete_topic()
 
     $allTopics = json_decode(stripslashes($_POST['all_topics']), true);
 
-    // Determine next topic url
-    $next_topic_url = '#';
-    $first_quiz_url = '#';
-    $next_quiz_url = '#';
-
+    // Determine next section URL
+    $next_topic_url = '#'; // default value
     foreach ($allTopics as $index => $topic) {
-
-        if ($topic['topic_id'] == $topic_id) {
-
-            if (!empty($topic['quiz_id'])) {
-                $topic_slug = get_post_field('post_name', $topic['topic_id']);
-
-                foreach ($topic['quiz_id'] as $quiz_index => $quiz_id) {
-                    $quiz_slug = get_post_field('post_name', $quiz_id);
-
-                    if ($quiz_index == 0) {
-                        $first_quiz_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' . $topic_slug . '/quiz/' . $quiz_slug . '/';
-                    }
-
-                    if (isset($topic['quiz_id'][$quiz_index + 1])) {
-                        $next_quiz_id = $topic['quiz_id'][$quiz_index + 1];
-                        $next_quiz_slug = get_post_field('post_name', $next_quiz_id);
-                        $next_quiz_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' . $topic_slug  . '/quiz/' . $next_quiz_slug . '/';
-                        break;
-                    }
-                }
-            }
-
-            if ($next_quiz_url === '#' && isset($allTopics[$index + 1])) {
-                $next_topic = $allTopics[$index + 1];
-                $next_topic_slug = get_post_field('post_name', $next_topic['topic_id']);
-                $next_topic_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' .  $next_topic_slug . '/';
-            }
-
+        if ($topic['topic_id'] == $topic_id && isset($allTopics[$index + 1])) {
+            $next_topic = $allTopics[$index + 1];
+            $next_topic_slug = get_post_field('post_name', $next_topic['topic_id']);
+            $next_topic_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/topics/' . $next_topic_slug . '/';
             break;
         }
     }
 
-    if ($next_topic_url !== '#' || $first_quiz_url !== '#' || $next_quiz_url !== '#') {
+    if ($next_topic_url !== '#') {
         wp_send_json_success(array(
-            'next_topic_url' => $next_topic_url,
-            'first_quiz_url' => $first_quiz_url,
-            'next_quiz_url' => $next_quiz_url
+            'next_topic_url' => $next_topic_url
         ));
     } else {
         $fallback_url = get_site_url() . '/course/' . $_POST['course_slug'] . '/chapters/' . $_POST['chapter_slug'] . '/lessons/' . $_POST['lesson_slug'] . '/';
         wp_send_json_error(array(
-            'next_lesson_url' => $fallback_url
+            'next_topic_url' => $fallback_url
         ));
     }
-
 
     wp_die();
 }

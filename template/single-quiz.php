@@ -266,30 +266,6 @@ if (have_posts()) :
             <?php
             // quiz is not completed so start quiz show otherwise result only show
             if (!as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_id)) {
-                $previousTopicCompleted = false;
-
-                $previous_topic = $previous_topic_url;
-                $parsed_topic = parse_url($previous_topic);
-                $topic_path_array = explode('/', trim($parsed_topic['path'], characters: '/'));
-                $previous_topic_slug = $topic_path_array[8];
-                $previous_topic_array = get_page_by_path($previous_topic_slug, OBJECT, 'topics');
-                $previous_topic_id = $previous_topic_array->ID;
-
-                $previos_topic_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $previous_topic_id, 0, 0);
-                if ($previos_topic_completed) {
-                    $previousTopicCompleted = true;
-                }
-
-                if (!$previousTopicCompleted) {
-                    echo '<div class="as-quiz-error-message as-alert-error-message">';
-                    echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous topic.</p>';
-                    echo '</div>';
-                    echo '<style>
-                            .as-quiz-container {
-                                display: none;
-                            }
-                        </style>';
-                }
             ?>
 
                 <div class="as-quiz-container">

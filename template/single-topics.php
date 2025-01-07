@@ -16,6 +16,8 @@ $next_topic_url = '#';
 $current_topic_outside_lesson_url = '#';
 $show_previous = false;
 $show_next = false;
+$currentTopicQuizCompleted = false;
+$isCurrentTopicsCompleted = false;
 
 $user_id = get_current_user_id();
 
@@ -102,6 +104,16 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                     $show_next = true;
                                 }
                             }
+
+                            // current topic quiz completed or not
+                            $current_topic_quiz_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, $quiz_id);
+                            if ($current_topic_quiz_completed) {
+                                $currentTopicQuizCompleted = true;
+                            }
+                            $current_topic_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, 0);
+                            if ($current_topic_completed) {
+                                $isCurrentTopicsCompleted = true;
+                            }
                         }
 
                         $current_topic_outside_lesson_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug  . '/';
@@ -153,10 +165,11 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 $completed['lesson_id'] == $lesson_id;
                         });
 
-                        $isCurrentTopicsCompleted = false;
+
                         $previousTopicCompleted = false;
                         $allPreviousLessonsTopicsCompleted = true;
                         $allPreviousChapterTopicsCompleted = true;
+
 
                         // Check current and previous topic completion status
                         foreach ($topic_dataes as $topic) {
@@ -167,10 +180,6 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             });
 
                             foreach ($completedSection as $completedTopicdata) {
-                                // Check if the current section is completed
-                                if ($completedTopicdata['chapter_id'] == $chapter_id && $completedTopicdata['lesson_id'] == $lesson_id && $completedTopicdata['topic_id'] == $topic_id && $completedTopicdata['section_id'] == 0 && !empty($isCompleted)) {
-                                    $isCurrentTopicsCompleted = true;
-                                }
 
                                 $previous_topic_id_condition = isset($previous_topic_id) ? $previous_topic_id : '';
                                 // if previous topic is completed
@@ -224,7 +233,8 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                     }
                                 }
                             }
-                        } ?>
+                        }
+        ?>
 
                         <div class="as-topic-content-wrapper">
                             <?php if (have_posts()) :
@@ -265,24 +275,37 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 }
                             </style>';
                                 } else {
-                                    if ($isCurrentTopicsCompleted) {
+                                    if (!$currentTopicQuizCompleted) {
+                                        echo '<div class="as-alert-error-message">';
+                                        echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please complete current topic quiz.</p>';
+                                        echo '</div>';
+                                        echo '<style>
+                                        .as-mark-complete-topic-btn {
+                                            display: none;
+                                        }
+        
+                                        .as-single-topic-next-butt {
+                                            display: block;
+                                        }
+                                    </style>';
+                                    } else if (!$isCurrentTopicsCompleted) {
                                         echo '<style>
                                 .as-mark-complete-topic-btn {
-                                    display: none;
+                                    display: block;
                                 }
 
                                 .as-single-topic-next-butt {
-                                    display: block;
+                                    display: none;
                                 }
                             </style>';
                                     } else {
                                         echo '<style>
                                 .as-mark-complete-topic-btn {
-                                    display: block;
+                                    display: none;
                                 }
 
                                 .as-single-topic-next-butt {
-                                    display: none;
+                                    display: block;
                                 }
                             </style>';
                                     }
@@ -355,24 +378,38 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             </style>';
                                 } else {
                                     if ($previousTopicCompleted || $topic_index == 0) {
-                                        if ($isCurrentTopicsCompleted) {
+                                        if (!$currentTopicQuizCompleted) {
+
+                                            echo '<div class="as-alert-error-message">';
+                                            echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please complete current topic quiz.</p>';
+                                            echo '</div>';
+                                            echo '<style>
+                                            .as-mark-complete-topic-btn {
+                                                display: none;
+                                            }
+            
+                                            .as-single-topic-next-butt {
+                                                display: block;
+                                            }
+                                        </style>';
+                                        } else if (!$isCurrentTopicsCompleted) {
                                             echo '<style>
                                 .as-mark-complete-topic-btn {
-                                    display: none;
+                                    display: block;
                                 }
 
                                 .as-single-topic-next-butt {
-                                    display: block;
+                                    display: none;
                                 }
                             </style>';
                                         } else {
                                             echo '<style>
                                 .as-mark-complete-topic-btn {
-                                    display: block;
+                                    display: none;
                                 }
 
                                 .as-single-topic-next-butt {
-                                    display: none;
+                                    display: block;
                                 }
                             </style>';
                                         }
