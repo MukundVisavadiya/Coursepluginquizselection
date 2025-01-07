@@ -110,6 +110,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             if ($current_topic_quiz_completed) {
                                 $currentTopicQuizCompleted = true;
                             }
+                            // current topic compeleted or not
                             $current_topic_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, $topic_id, 0, 0);
                             if ($current_topic_completed) {
                                 $isCurrentTopicsCompleted = true;

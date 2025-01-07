@@ -16,6 +16,8 @@ $next_lesson_url = '#';
 $current_lesson_outside_chapter_url = '#';
 $show_previous = false;
 $show_next = false;
+$currentLessonQuizCompleted = false;
+$isCurrentLessonCompleted = false;
 
 $user_id = get_current_user_id();
 
@@ -95,6 +97,17 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                                 $show_next = true;
                             }
                         }
+
+                        // current lesson quiz completed or not
+                        $current_lesson_quiz_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, $quiz_id);
+                        if ($current_lesson_quiz_completed) {
+                            $currentLessonQuizCompleted = true;
+                        }
+                        // current topic compeleted or not
+                        $current_lesson_completed = as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, 0);
+                        if ($current_lesson_completed) {
+                            $isCurrentLessonCompleted = true;
+                        }
                     }
 
                     $current_lesson_outside_chapter_url = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/';
@@ -142,7 +155,7 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                         return $completed['chapter_id'] == $chapter_id;
                     });
 
-                    $isCurrentLessonCompleted = false;
+
                     $previousLessonCompleted = false;
                     $allPreviousChaptersLessonsCompleted = true;
 
@@ -155,10 +168,6 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
 
 
                         foreach ($completedTopic as $completedLessondata) {
-                            // Check if the current lesson is completed
-                            if ($completedLessondata['chapter_id'] == $chapter_id && $completedLessondata['lesson_id'] == $lesson_id && $completedLessondata['topic_id'] == 0  && !empty($isCompleted)) {
-                                $isCurrentLessonCompleted = true;
-                            }
 
                             $previous_lesson_id_condition = isset($previous_lesson_id) ? $previous_lesson_id : '';
                             if ($completedLessondata['chapter_id'] == $chapter_id && $completedLessondata['lesson_id'] == $previous_lesson_id_condition && $completedLessondata['topic_id'] == 0  && !empty($isCompleted)) {
@@ -227,24 +236,37 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             }
                         </style>';
                             } else {
-                                if ($isCurrentLessonCompleted) {
+                                if (!$currentLessonQuizCompleted) {
+                                    echo '<div class="as-alert-error-message">';
+                                    echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please complete current lesson quiz.</p>';
+                                    echo '</div>';
+                                    echo '<style>
+                                    .as-mark-complete-lesson-btn {
+                                        display: none;
+                                    }
+        
+                                    .as-single-lesson-next-butt {
+                                        display: block;
+                                    }
+                                </style>';
+                                } else if (!$isCurrentLessonCompleted) {
                                     echo '<style>
                             .as-mark-complete-lesson-btn {
-                                display: none;
+                                display: block;
                             }
 
                             .as-single-lesson-next-butt {
-                                display: block;
+                                display: none;
                             }
                         </style>';
                                 } else {
                                     echo '<style>
                             .as-mark-complete-lesson-btn {
-                                display: block;
+                                display: none;
                             }
 
                             .as-single-lesson-next-butt {
-                                display: none;
+                                display: block;
                             }
                         </style>';
                                 }
@@ -292,26 +314,39 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
                             } else {
 
                                 if ($previousLessonCompleted || $lesson_index == 0) {
-                                    if ($isCurrentLessonCompleted) {
+                                    if (!$currentLessonQuizCompleted) {
+                                        echo '<div class="as-alert-error-message">';
+                                        echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please complete current lesson quiz.</p>';
+                                        echo '</div>';
                                         echo '<style>
-                            .as-mark-complete-lesson-btn {
-                                display: none;
-                            }
-
-                            .as-single-lesson-next-butt {
-                                display: block;
-                            }
-                        </style>';
+                                        .as-mark-complete-lesson-btn {
+                                            display: block;
+                                        }
+            
+                                        .as-single-lesson-next-butt {
+                                            display: none;
+                                        }
+                                    </style>';
+                                    } else if (!$isCurrentLessonCompleted) {
+                                        echo '<style>
+                                .as-mark-complete-lesson-btn {
+                                    display: block;
+                                }
+    
+                                .as-single-lesson-next-butt {
+                                    display: none;
+                                }
+                            </style>';
                                     } else {
                                         echo '<style>
-                            .as-mark-complete-lesson-btn {
-                                display: block;
-                            }
-
-                            .as-single-lesson-next-butt {
-                                display: none;
-                            }
-                        </style>';
+                                .as-mark-complete-lesson-btn {
+                                    display: none;
+                                }
+    
+                                .as-single-lesson-next-butt {
+                                    display: block;
+                                }
+                            </style>';
                                     }
                                 } else {
                                     echo '<div class="as-alert-error-message">';

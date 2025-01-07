@@ -355,16 +355,12 @@ jQuery(document).ready(function () {
       },
       success: function (response) {
         if (response.success) {
-          if (response.data.first_quiz_url !== "#") {
-            window.location.href = response.data.first_quiz_url;
-          } else if (response.data.next_lesson_url !== "#") {
+          if (response.data.next_lesson_url) {
             window.location.href = response.data.next_lesson_url;
-          } else if (response.data.next_quiz_url !== "#") {
-            window.location.href = response.data.next_quiz_url;
           }
         } else {
-          if (response.data && response.data.next_chapter_url) {
-            window.location.href = response.data.next_chapter_url;
+          if (response.data && response.data.next_lesson_url) {
+            window.location.href = response.data.next_lesson_url;
           } else {
             console.log("No next section or fallback URL available.");
           }
@@ -670,8 +666,6 @@ jQuery(document).ready(function () {
                   jQuery(".as-next-lesson-quiz-url").val() || "";
                 var previousLessonUrl =
                   jQuery(".as-previous-lesson-quiz-url").val() || "";
-                var nextparentchapterurl =
-                  jQuery(".as-next-chapter-url").val() || "";
                 var showNext = jQuery(".as-show-lesson-next").val() || "";
 
                 jQuery(".as-quiz-results").empty();
@@ -696,7 +690,7 @@ jQuery(document).ready(function () {
                                     ? `<a class="as-clts-quiz-next-butt" href="${nextLessonUrl}">Next &raquo;</a>`
                                     : `
                                   <div class="as-current-section-outside-topic" style="margin-top: 20px;">
-                                    <a href="${nextparentchapterurl}" class="as-current-section-outside-topic-btn">Proceed to Next Chapter</a>
+                                    <a href="${previousLessonUrl}" class="as-current-section-outside-topic-btn">Proceed to Previous Lesson</a>
                                   </div>
                                 `
                                 } 

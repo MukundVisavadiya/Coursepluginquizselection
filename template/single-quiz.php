@@ -443,30 +443,6 @@ if (have_posts()) :
             <?php
             // quiz is not completed so start quiz show otherwise result only show
             if (!as_is_step_completed($completedSteps, $chapter_id, $lesson_id, 0, 0, $quiz_id)) {
-                $previousLessonCompleted = false;
-
-                $previous_lesson = $previous_lesson_url;
-                $parsed_lesson = parse_url($previous_lesson);
-                $lesson_path_array = explode('/', trim($parsed_lesson['path'], characters: '/'));
-                $previous_lesson_slug = $lesson_path_array[6];
-                $previous_lesson_array = get_page_by_path($previous_lesson_slug, OBJECT, 'lessons');
-                $previous_lesson_id = $previous_lesson_array->ID;
-
-                $previos_lesson_completed = as_is_step_completed($completedSteps, $chapter_id, $previous_lesson_id, 0, 0, 0);
-                if ($previos_lesson_completed) {
-                    $previousLessonCompleted = true;
-                }
-
-                if (!$previousLessonCompleted) {
-                    echo '<div class="as-quiz-error-message as-alert-error-message">';
-                    echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous lesson.</p>';
-                    echo '</div>';
-                    echo '<style>
-                            .as-quiz-container {
-                                display: none;
-                            }
-                        </style>';
-                }
             ?>
 
                 <div class="as-quiz-container">
