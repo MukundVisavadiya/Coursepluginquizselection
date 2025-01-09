@@ -648,7 +648,7 @@ jQuery(document).ready(function () {
                                     ? `<a class="as-clts-quiz-next-butt" href="${nextTopicUrl}">Next &raquo;</a>`
                                     : `
                                   <div class="as-current-section-outside-topic" style="margin-top: 20px;">
-                                    <a href="${previousTopicUrl}" class="as-current-section-outside-topic-btn">Proceed to Next Lesson</a>
+                                    <a href="${previousTopicUrl}" class="as-current-section-outside-topic-btn">Proceed to Previous Topic</a>
                                   </div>
                                 `
                                 } 

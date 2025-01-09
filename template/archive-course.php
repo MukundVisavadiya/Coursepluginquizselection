@@ -125,9 +125,9 @@ $latest_course_id = $latest_future_course->have_posts() ? $latest_future_course-
                         </p>
                     <?php else : ?>
                         <?php if (!is_user_logged_in()) : ?>
-                            <button class="as-course-button-user-login">
+                            <a class="as-course-button-user-login" href="http://192.168.29.81/search/wp-login.php?loggedout=true&wp_lang=en_US">
                                 <i class="fa-solid fa-right-to-bracket"></i> Login
-                            </button>
+                            </a>
                         <?php else : ?>
                             <?php if (in_array(get_the_ID(), $enrollments)) : ?>
                                 <a class="as-course-button-user-visit-course" href="<?php the_permalink(); ?>"><i class="fa-solid fa-street-view"></i> View Course</a>

@@ -155,10 +155,6 @@ $progress_data = as_calculate_course_progress($course_id, $user_id);
 
                     foreach ($completedLesson as $completedChapterdata) {
 
-                        if ($completedChapterdata['chapter_id'] == $chapter_id && $completedChapterdata['lesson_id'] == 0  && !empty($isCompleted)) {
-                            $isCurrentChapterCompleted = true;
-                        }
-
                         $previous_chapter_id_condition = isset($previous_chapter_id) ? $previous_chapter_id : '';
                         if ($completedChapterdata['chapter_id'] == $previous_chapter_id_condition && $completedChapterdata['lesson_id'] == 0) {
                             $previousChapterCompleted = true;
