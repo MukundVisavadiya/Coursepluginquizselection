@@ -12,11 +12,12 @@ function get_chapter_navigation_urls($path_array)
     $current_chapter_outside_course_url = '#';
     $chapter_course_id = '#';
     $chapter_chapter_id = '#';
+    $lesson_dataes = '';
 
     // Get course details from URL
     $course = get_page_by_path($path_array[2], OBJECT, 'course');
     if (!$course) {
-        return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id');
+        return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id', 'lesson_dataes');
     }
     $chapter_course_id = $course->ID;
     $course_slug = $course->post_name;
@@ -61,11 +62,11 @@ function get_chapter_navigation_urls($path_array)
 
             $current_chapter_outside_course_url  = get_site_url() . '/course/' . $course_slug . '/';
 
-            return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id');
+            return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id', 'lesson_dataes');
         }
     }
     // Default return if no matching section is found
-    return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id');
+    return compact('show_chapter_previous', 'show_chapter_next', 'previous_chapter_url', 'next_chapter_url', 'current_chapter_outside_course_url', 'chapter_course_id', 'chapter_chapter_id', 'lesson_dataes');
 }
 // This function use for topics quiz
 function get_lesson_navigation_urls($path_array)
@@ -81,11 +82,12 @@ function get_lesson_navigation_urls($path_array)
     $lesson_course_id = '#';
     $lesson_chapter_id = '#';
     $lesson_lesson_id = '#';
+    $topic_dataes = '';
 
     // Get course details from URL
     $course = get_page_by_path($path_array[2], OBJECT, 'course');
     if (!$course) {
-        return compact('show_lesson_previous', 'show_lesson_next', 'previous_lesson_url', 'next_lesson_url', 'current_lesson_outside_chapter_url', 'lesson_course_id', 'lesson_chapter_id', 'lesson_lesson_id');
+        return compact('show_lesson_previous', 'show_lesson_next', 'previous_lesson_url', 'next_lesson_url', 'current_lesson_outside_chapter_url', 'lesson_course_id', 'lesson_chapter_id', 'lesson_lesson_id', 'topic_dataes');
     }
     $lesson_course_id = $course->ID;
     $course_slug = $course->post_name;
@@ -133,13 +135,13 @@ function get_lesson_navigation_urls($path_array)
 
                 $current_lesson_outside_chapter_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/';
 
-                return compact('show_lesson_previous', 'show_lesson_next', 'previous_lesson_url', 'next_lesson_url', 'current_lesson_outside_chapter_url', 'lesson_course_id', 'lesson_chapter_id', 'lesson_lesson_id');
+                return compact('show_lesson_previous', 'show_lesson_next', 'previous_lesson_url', 'next_lesson_url', 'current_lesson_outside_chapter_url', 'lesson_course_id', 'lesson_chapter_id', 'lesson_lesson_id', 'topic_dataes');
             }
         }
     }
 
     // Default return if no matching section is found
-    return compact('show_lesson_previous', 'show_lesson_next', 'previous_lesson_url', 'next_lesson_url', 'current_lesson_outside_chapter_url', 'lesson_course_id', 'lesson_chapter_id', 'lesson_lesson_id');
+    return compact('show_lesson_previous', 'show_lesson_next', 'previous_lesson_url', 'next_lesson_url', 'current_lesson_outside_chapter_url', 'lesson_course_id', 'lesson_chapter_id', 'lesson_lesson_id', 'topic_dataes');
 }
 // This function use for topics quiz
 function get_topics_navigation_urls($path_array)
@@ -156,11 +158,12 @@ function get_topics_navigation_urls($path_array)
     $topic_chapter_id = '#';
     $topic_lesson_id = '#';
     $topic_topic_id = '#';
+    $section_dataes = '';
 
     // Get course details from URL
     $course = get_page_by_path($path_array[2], OBJECT, 'course');
     if (!$course) {
-        return compact('show_topic_previous', 'show_topic_next', 'previous_topic_url', 'next_topic_url', 'current_topic_outside_lesson_url', 'topic_course_id', 'topic_chapter_id', 'topic_topic_id', 'topic_lesson_id');
+        return compact('show_topic_previous', 'show_topic_next', 'previous_topic_url', 'next_topic_url', 'current_topic_outside_lesson_url', 'topic_course_id', 'topic_chapter_id', 'topic_topic_id', 'topic_lesson_id', 'section_dataes');
     }
     $topic_course_id = $course->ID;
     $course_slug = $course->post_name;
@@ -178,6 +181,7 @@ function get_topics_navigation_urls($path_array)
             $lesson_meta_slug = get_post_field('post_name', $lesson_data['lesson_id']);
 
             foreach ($topic_dataes as $topic_index => $topic_data) {
+                $section_dataes = $topic_data['sections'];
                 $topic_topic_id = $topic_data['topic_id'];
                 $topic_meta_slug = get_post_field('post_name', $topic_data['topic_id']);
                 $quiz_ids = $topic_data['quiz_id'] ?? [];
@@ -212,14 +216,14 @@ function get_topics_navigation_urls($path_array)
 
                     $current_topic_outside_lesson_url  = get_site_url() . '/course/' . $course_slug . '/chapters/' . $chapter_meta_slug . '/lessons/' . $lesson_meta_slug . '/';
 
-                    return compact('show_topic_previous', 'show_topic_next', 'previous_topic_url', 'next_topic_url', 'current_topic_outside_lesson_url', 'topic_course_id', 'topic_chapter_id', 'topic_topic_id', 'topic_lesson_id');
+                    return compact('show_topic_previous', 'show_topic_next', 'previous_topic_url', 'next_topic_url', 'current_topic_outside_lesson_url', 'topic_course_id', 'topic_chapter_id', 'topic_topic_id', 'topic_lesson_id', 'section_dataes');
                 }
             }
         }
     }
 
     // Default return if no matching section is found
-    return compact('show_topic_previous', 'show_topic_next', 'previous_topic_url', 'next_topic_url', 'current_topic_outside_lesson_url', 'topic_course_id', 'topic_chapter_id', 'topic_topic_id', 'topic_lesson_id');
+    return compact('show_topic_previous', 'show_topic_next', 'previous_topic_url', 'next_topic_url', 'current_topic_outside_lesson_url', 'topic_course_id', 'topic_chapter_id', 'topic_topic_id', 'topic_lesson_id', 'section_dataes');
 }
 
 // This function use for section quiz

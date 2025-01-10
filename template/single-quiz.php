@@ -254,6 +254,34 @@ if (have_posts()) :
             <?php
             }
         } else if ($path_array[7] == 'topics') {
+
+            // Check inside topic quiz if all section & section inside all quiz complete after access this topic quiz access
+            $is_section_and_section_quiz_completed = false;
+
+            foreach ($section_dataes as $section) {
+                $completed_section_id = $section['section_id'];
+                foreach ($section['quiz_id'] as $section_quiz_id) {
+                    if (
+                        as_is_step_completed($completedSteps, $topic_chapter_id, $topic_lesson_id, $topic_topic_id, $completed_section_id, 0) &&
+                        as_is_step_completed($completedSteps, $topic_chapter_id, $topic_lesson_id, $topic_topic_id, $completed_section_id, $section_quiz_id)
+                    ) {
+                        $is_section_and_section_quiz_completed = true;
+                        break;
+                    }
+                }
+            }
+
+            // Display error message if the required sections and quizzes are not completed
+            if (!$is_section_and_section_quiz_completed) {
+                echo '<div class="as-quiz-error-message as-alert-error-message">';
+                echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous section & section quiz.</p>';
+                echo '</div>';
+                echo '<style>
+                    .as-quiz-container {
+                        display: none;
+                    }
+                </style>';
+            }
             ?>
             <!-- topic hidden field -->
             <input type="hidden" class="as-next-topic-quiz-url" value="<?php echo $next_topic_url; ?>" />
@@ -432,6 +460,33 @@ if (have_posts()) :
             <?php
             }
         } else if ($path_array[5] == 'lessons') {
+            // Check inside lesson quiz if all topic & topic inside all quiz complete after access this lesson quiz access
+            $is_topic_and_topic_quiz_completed = false;
+
+            foreach ($topic_dataes as $topic) {
+                $completed_topic_id = $topic['topic_id'];
+                foreach ($topic['quiz_id'] as $topic_quiz_id) {
+                    if (
+                        as_is_step_completed($completedSteps, $lesson_chapter_id, $lesson_lesson_id, $completed_topic_id, 0, 0) &&
+                        as_is_step_completed($completedSteps, $lesson_chapter_id, $lesson_lesson_id, $completed_topic_id, 0, $topic_quiz_id)
+                    ) {
+                        $is_topic_and_topic_quiz_completed = true;
+                        break;
+                    }
+                }
+            }
+
+            // Display error message if the required sections and quizzes are not completed
+            if (!$is_topic_and_topic_quiz_completed) {
+                echo '<div class="as-quiz-error-message as-alert-error-message">';
+                echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous topic & topic quiz.</p>';
+                echo '</div>';
+                echo '<style>
+                       .as-quiz-container {
+                           display: none;
+                       }
+                   </style>';
+            }
             ?>
             <!-- topic hidden field -->
             <input type="hidden" class="as-next-lesson-quiz-url" value="<?php echo $next_lesson_url; ?>" />
@@ -609,6 +664,34 @@ if (have_posts()) :
             <?php
             }
         } else if ($path_array[3] == 'chapters') {
+            // Check inside lesson quiz if all lesson & lesson inside all quiz complete after access this lesson quiz access
+            $is_lesson_and_lesson_quiz_completed = false;
+
+            foreach ($lesson_dataes as $lesson) {
+                $completed_lesson_id = $lesson['lesson_id'];
+                foreach ($lesson['quiz_id'] as $lesson_quiz_id) {
+                    if (
+                        as_is_step_completed($completedSteps, $chapter_chapter_id, $completed_lesson_id, 0, 0, 0) &&
+                        as_is_step_completed($completedSteps, $chapter_chapter_id, $completed_lesson_id, 0, 0, $lesson_quiz_id)
+                    ) {
+                        $is_lesson_and_lesson_quiz_completed = true;
+                        break;
+                    }
+                }
+            }
+
+            // Display error message if the required sections and quizzes are not completed
+            if (!$is_lesson_and_lesson_quiz_completed) {
+                echo '<div class="as-quiz-error-message as-alert-error-message">';
+                echo '<p class="as-course-uncompleted-message"><i class="fa-solid fa-circle-exclamation"></i> Please go back and complete the previous lesson & lesson quiz.</p>';
+                echo '</div>';
+                echo '<style>
+                         .as-quiz-container {
+                             display: none;
+                         }
+                     </style>';
+            }
+
             ?>
             <!-- topic hidden field -->
             <input type="hidden" class="as-next-chapter-quiz-url" value="<?php echo $next_chapter_url; ?>" />
