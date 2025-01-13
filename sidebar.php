@@ -90,7 +90,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                 </div>
                                 <div>
                                     <?php
-                                    $isChapterQuizCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, 0, 0, 0, $quiz_id);
+                                    $isChapterQuizCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, 0, 0, 0, $quiz_chapter_id);
                                     if ($isChapterQuizCompleted) {
                                         echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                     }
@@ -152,7 +152,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                     </div>
                                     <div>
                                         <?php
-                                        $isLessonQuizCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, 0, 0, $quiz_id);
+                                        $isLessonQuizCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, 0, 0, $quiz_lesson_id);
                                         if ($isLessonQuizCompleted) {
                                             echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                         }
@@ -214,7 +214,7 @@ $completedSteps = $wpdb->get_results($wpdb->prepare(
                                             </div>
                                             <div>
                                                 <?php
-                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, $topic_sidebar_id, 0, $quiz_id);
+                                                $isTopicQuizCompleted = as_is_step_completed($completedSteps, $chapter_sidebar_id, $lesson_sidebar_id, $topic_sidebar_id, 0, $quiz_topic_id);
                                                 if ($isTopicQuizCompleted) {
                                                     echo ' <i class="fa-solid fa-check" style="color: green;"></i>';
                                                 }

@@ -227,8 +227,7 @@ body {
   display: block;
 }
 
-.as-sildebar-chapter-list .as-sidebar-chapter-accordion-parent,
-.as-sidebar-chapter-quiz-accordion {
+.as-sildebar-chapter-list .as-sidebar-chapter-accordion-parent {
   background-color: #666666;
   color: #ffffff;
   padding: 18px;
@@ -238,6 +237,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.as-sidebar-chapter-quiz-accordion {
+  background-color: #666666;
+  color: #ffffff;
+  padding: 18px;
+  font-size: 18px;
+  width: 100%;
+  margin-bottom: 2px;
 }
 
 .as-sildebar-chapter-list .as-lesson-accordion-sidebar-child,
